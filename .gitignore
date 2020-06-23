@@ -1,0 +1,6 @@
+kernel/
+projects/keil/Listings/
+projects/keil/Objects/
+projects/keil/bin/
+projects/.vs
+projects/VisualGDB

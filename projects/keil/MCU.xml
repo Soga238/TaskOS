@@ -1,0 +1,129 @@
+<?xml version="1.0"?>
+<EmbeddedProfile xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <ToolchainID>com.sysprogs.toolchains.nongnu.armclang</ToolchainID>
+  <ToolchainVersion>
+    <GCC>6.x</GCC>
+    <Revision>1</Revision>
+  </ToolchainVersion>
+  <BspID>KEIL:Keil/STM32F1xx_DFP</BspID>
+  <BspVersion>2.3.0</BspVersion>
+  <McuID>STM32F103RC</McuID>
+  <MCUDefinitionFile>SVD/STM32F103xx.svd</MCUDefinitionFile>
+  <MCUProperties>
+    <Entries />
+  </MCUProperties>
+  <BSPSourceFolderName>Device-specific files</BSPSourceFolderName>
+  <MCUMakFile>mcu.mak</MCUMakFile>
+  <ReferencedFrameworks />
+  <FrameworkProperties>
+    <Entries>
+      <KeyValue>
+        <Key>KEILCOMP:Board Support</Key>
+        <Value>MCBSTM32E</Value>
+      </KeyValue>
+      <KeyValue>
+        <Key>KEILCOMP:Compiler</Key>
+        <Value>ARM Compiler</Value>
+      </KeyValue>
+      <KeyValue>
+        <Key>KEILCOMP:File System</Key>
+        <Value>MDK-Pro</Value>
+      </KeyValue>
+      <KeyValue>
+        <Key>KEILCOMP:Graphics</Key>
+        <Value>MDK-Pro</Value>
+      </KeyValue>
+      <KeyValue>
+        <Key>KEILCOMP:Network</Key>
+        <Value>MDK-Pro Net_v6</Value>
+      </KeyValue>
+      <KeyValue>
+        <Key>KEILCOMP:USB</Key>
+        <Value>MDK-Pro</Value>
+      </KeyValue>
+      <KeyValue>
+        <Key>KEILCOMP:CMSIS/CORE</Key>
+        <Value>1</Value>
+      </KeyValue>
+      <KeyValue>
+        <Key>KEILCOMP:Device/Startup</Key>
+        <Value>1</Value>
+      </KeyValue>
+      <KeyValue>
+        <Key>KEILCOMP:Device/StdPeriph Drivers/Framework</Key>
+        <Value>1</Value>
+      </KeyValue>
+      <KeyValue>
+        <Key>KEILCOMP:Device/StdPeriph Drivers/Flash</Key>
+        <Value>1</Value>
+      </KeyValue>
+      <KeyValue>
+        <Key>KEILCOMP:Device/StdPeriph Drivers/RCC</Key>
+        <Value>1</Value>
+      </KeyValue>
+      <KeyValue>
+        <Key>KEILCOMP:Device/StdPeriph Drivers/GPIO</Key>
+        <Value>1</Value>
+      </KeyValue>
+    </Entries>
+  </FrameworkProperties>
+  <TestFrameworkProperties>
+    <Entries />
+  </TestFrameworkProperties>
+  <ImportedProject>
+    <ImporterID>com.sysprogs.project_importers.keil</ImporterID>
+    <RelativeProjectPath>TinyOS.uvprojx</RelativeProjectPath>
+    <AllDependencies>
+      <ProjectDependency>
+        <RelativePath>TinyOS.uvprojx</RelativePath>
+        <Timestamp>132372908677062064</Timestamp>
+      </ProjectDependency>
+    </AllDependencies>
+    <RootDirectory>
+      <Subdirectories>
+        <VirtualDirectorySnapshot>
+          <Name>usr_app</Name>
+          <Files>
+            <VirtualFileSnapshot>
+              <RelativePath>..\..\usr_app\main.c</RelativePath>
+            </VirtualFileSnapshot>
+          </Files>
+        </VirtualDirectorySnapshot>
+        <VirtualDirectorySnapshot>
+          <Name>kernel</Name>
+          <Files />
+        </VirtualDirectorySnapshot>
+        <VirtualDirectorySnapshot>
+          <Name>::CMSIS</Name>
+          <Files />
+        </VirtualDirectorySnapshot>
+        <VirtualDirectorySnapshot>
+          <Name>::Device</Name>
+          <Files />
+        </VirtualDirectorySnapshot>
+      </Subdirectories>
+      <Files />
+    </RootDirectory>
+    <Configurations>
+      <ImportedConfiguration>
+        <IsStaticLibrary>false</IsStaticLibrary>
+        <Settings>
+          <IncludeDirectories>
+            <string>F:\git-repositories\TinyOS\projects\keil</string>
+          </IncludeDirectories>
+          <PreprocessorMacros>
+            <string />
+          </PreprocessorMacros>
+          <GeneratePreprocessorOutput>false</GeneratePreprocessorOutput>
+          <IsDebugConfiguration>false</IsDebugConfiguration>
+        </Settings>
+      </ImportedConfiguration>
+    </Configurations>
+  </ImportedProject>
+  <SyntheticFrameworkFolderNames>
+    <string>CORE</string>
+    <string>Startup</string>
+    <string>StdPeriph Drivers</string>
+    <string>RTE</string>
+  </SyntheticFrameworkFolderNames>
+</EmbeddedProfile>

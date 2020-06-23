@@ -1,0 +1,118 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source files">
+      <UniqueIdentifier>{4a122982-9f13-4b6a-830f-acc3edabf196}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header files">
+      <UniqueIdentifier>{f1ea6987-3d41-4d2e-b70e-c5287c0b5729}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource files">
+      <UniqueIdentifier>{3b203054-f2b3-4026-a920-01b0b7467bc9}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+    <Filter Include="Source files\usr_app">
+      <UniqueIdentifier>{cfe47768-1ba5-483e-9d6c-02cfdc5be332}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source files\kernel">
+      <UniqueIdentifier>{a7bb643e-4c27-4c08-939b-74cb5a5e6f31}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source files\::CMSIS">
+      <UniqueIdentifier>{89c1998f-adf1-4fea-85c3-545f196586da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source files\::Device">
+      <UniqueIdentifier>{f895e9e0-c2d1-4569-b0a5-2252d7f8e4e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source files\Device-specific files">
+      <UniqueIdentifier>{03018953-457c-4ce1-903d-c071b77bf834}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header files\usr_app">
+      <UniqueIdentifier>{aee81004-f833-4bcd-9695-8eea55bd88ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header files\kernel">
+      <UniqueIdentifier>{2b7700bb-07b4-4681-a09f-441a72e32ad6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header files\::CMSIS">
+      <UniqueIdentifier>{08cd41f2-af19-46b0-a73c-fb89489356fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header files\::Device">
+      <UniqueIdentifier>{f87a3b60-62b3-4e3a-ac7c-933e44e82165}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header files\Device-specific files">
+      <UniqueIdentifier>{17885666-143c-47bf-a0f8-d55838fdd731}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="VisualGDB settings">
+      <UniqueIdentifier>{b3605f99-a0a3-4a43-980a-70b24262b2f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source files\Device-specific files\StdPeriph Drivers">
+      <UniqueIdentifier>{610aa144-e8f3-49cd-b51b-c19b14b64d39}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header files\Device-specific files\StdPeriph Drivers">
+      <UniqueIdentifier>{72c92d4e-a8a0-47a9-b147-55ecf989be61}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\usr_app\main.c">
+      <Filter>Source files\usr_app</Filter>
+    </ClCompile>
+    <None Include="mcu.props">
+      <Filter>Source files\Device-specific files</Filter>
+    </None>
+    <ClInclude Include="$(BSP_ROOT)\Device\Include\stm32f10x.h">
+      <Filter>Header files\Device-specific files</Filter>
+    </ClInclude>
+    <None Include="TinyOS-Debug.vgdbsettings">
+      <Filter>VisualGDB settings</Filter>
+    </None>
+    <None Include="TinyOS-Release.vgdbsettings">
+      <Filter>VisualGDB settings</Filter>
+    </None>
+    <None Include="MCU.xml">
+      <Filter>VisualGDB settings</Filter>
+    </None>
+    <ClCompile Include="RTE\Device\startup_stm32f10x_hd.s">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="RTE\Device\system_stm32f10x.c">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(TOOLCHAIN_ROOT)\..\pack\Keil\STM32F1xx_DFP\2.3.0\Device\StdPeriph_Driver\src\misc.c">
+      <Filter>Source files\Device-specific files\StdPeriph Drivers</Filter>
+    </ClCompile>
+    <ClCompile Include="$(TOOLCHAIN_ROOT)\..\pack\Keil\STM32F1xx_DFP\2.3.0\Device\StdPeriph_Driver\src\stm32f10x_flash.c">
+      <Filter>Source files\Device-specific files\StdPeriph Drivers</Filter>
+    </ClCompile>
+    <ClCompile Include="$(TOOLCHAIN_ROOT)\..\pack\Keil\STM32F1xx_DFP\2.3.0\Device\StdPeriph_Driver\src\stm32f10x_gpio.c">
+      <Filter>Source files\Device-specific files\StdPeriph Drivers</Filter>
+    </ClCompile>
+    <ClCompile Include="$(TOOLCHAIN_ROOT)\..\pack\Keil\STM32F1xx_DFP\2.3.0\Device\StdPeriph_Driver\src\stm32f10x_rcc.c">
+      <Filter>Source files\Device-specific files\StdPeriph Drivers</Filter>
+    </ClCompile>
+    <ClInclude Include="RTE/RTE_Components.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="RTE\Device\RTE_Device.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="RTE\Device\stm32f10x_conf.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(TOOLCHAIN_ROOT)\..\pack\Keil\STM32F1xx_DFP\2.3.0\Device\StdPeriph_Driver\inc\misc.h">
+      <Filter>Header files\Device-specific files\StdPeriph Drivers</Filter>
+    </ClInclude>
+    <ClInclude Include="$(TOOLCHAIN_ROOT)\..\pack\Keil\STM32F1xx_DFP\2.3.0\Device\StdPeriph_Driver\inc\stm32f10x_flash.h">
+      <Filter>Header files\Device-specific files\StdPeriph Drivers</Filter>
+    </ClInclude>
+    <ClInclude Include="$(TOOLCHAIN_ROOT)\..\pack\Keil\STM32F1xx_DFP\2.3.0\Device\StdPeriph_Driver\inc\stm32f10x_gpio.h">
+      <Filter>Header files\Device-specific files\StdPeriph Drivers</Filter>
+    </ClInclude>
+    <ClInclude Include="$(TOOLCHAIN_ROOT)\..\pack\Keil\STM32F1xx_DFP\2.3.0\Device\StdPeriph_Driver\inc\stm32f10x_rcc.h">
+      <Filter>Header files\Device-specific files\StdPeriph Drivers</Filter>
+    </ClInclude>
+    <ClCompile Include="..\..\kernel\source\switch.c">
+      <Filter>Source files\kernel</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
