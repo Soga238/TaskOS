@@ -3,3 +3,6 @@ projects/keil/Objects/
 projects/keil/bin/
 projects/.vs
 projects/VisualGDB
+/projects/keil/VisualGDB
+/projects/keil/.vs/TinyOS/v16
+/.vs

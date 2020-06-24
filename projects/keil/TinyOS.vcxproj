@@ -40,16 +40,17 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|VisualGDB'">
     <ClCompile>
-      <AdditionalIncludeDirectories>.;%(ClCompile.AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>;%(ClCompile.PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>RTE/_Target_1;RTE/Device/STM32F103RC;%(ClCompile.AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>DEBUG=1;%(ClCompile.PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions />
       <CLanguageStandard />
       <CPPLanguageStandard />
       <Optimization>O1</Optimization>
     </ClCompile>
     <Link>
-      <AdditionalLinkerInputs>%(Link.AdditionalLinkerInputs)</AdditionalLinkerInputs>
+      <AdditionalLinkerInputs>;%(Link.AdditionalLinkerInputs)</AdditionalLinkerInputs>
       <AdditionalOptions />
+      <LinkerScript />
     </Link>
     <KeilSettingsContainer>
       <KeilCPUType>Cortex-M3</KeilCPUType>
@@ -64,7 +65,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|VisualGDB'">
     <ClCompile>
       <AdditionalIncludeDirectories>.;%(ClCompile.AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>;%(ClCompile.PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG=1;RELEASE=1;$$com.sysprogs.bspoptions.primary_memory$$_layout;;%(ClCompile.PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions />
       <CLanguageStandard />
       <CPPLanguageStandard />
@@ -80,6 +81,7 @@
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\kernel\source\os_cpu.s" />
     <ClCompile Include="..\..\kernel\source\switch.c" />
     <ClCompile Include="..\..\usr_app\main.c" />
     <None Include="mcu.props" />
@@ -93,6 +95,9 @@
     <ClCompile Include="$(TOOLCHAIN_ROOT)\..\pack\Keil\STM32F1xx_DFP\2.3.0\Device\StdPeriph_Driver\src\stm32f10x_flash.c" />
     <ClCompile Include="$(TOOLCHAIN_ROOT)\..\pack\Keil\STM32F1xx_DFP\2.3.0\Device\StdPeriph_Driver\src\stm32f10x_gpio.c" />
     <ClCompile Include="$(TOOLCHAIN_ROOT)\..\pack\Keil\STM32F1xx_DFP\2.3.0\Device\StdPeriph_Driver\src\stm32f10x_rcc.c" />
+    <ClInclude Include="..\..\kernel\source\include\TinyOS.h" />
+    <ClInclude Include="..\..\kernel\source\include\tk_compiler.h" />
+    <ClInclude Include="..\..\kernel\source\include\tk_types.h" />
     <ClInclude Include="RTE/RTE_Components.h" />
     <ClInclude Include="RTE\Device\RTE_Device.h" />
     <ClInclude Include="RTE\Device\stm32f10x_conf.h" />

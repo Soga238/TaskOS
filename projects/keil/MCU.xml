@@ -76,7 +76,7 @@
     <AllDependencies>
       <ProjectDependency>
         <RelativePath>TinyOS.uvprojx</RelativePath>
-        <Timestamp>132372908677062064</Timestamp>
+        <Timestamp>132373718386143395</Timestamp>
       </ProjectDependency>
     </AllDependencies>
     <RootDirectory>
@@ -91,7 +91,11 @@
         </VirtualDirectorySnapshot>
         <VirtualDirectorySnapshot>
           <Name>kernel</Name>
-          <Files />
+          <Files>
+            <VirtualFileSnapshot>
+              <RelativePath>..\..\kernel\source\switch.c</RelativePath>
+            </VirtualFileSnapshot>
+          </Files>
         </VirtualDirectorySnapshot>
         <VirtualDirectorySnapshot>
           <Name>::CMSIS</Name>
@@ -112,6 +116,7 @@
             <string>F:\git-repositories\TinyOS\projects\keil</string>
           </IncludeDirectories>
           <PreprocessorMacros>
+            <string>$$com.sysprogs.bspoptions.primary_memory$$_layout</string>
             <string />
           </PreprocessorMacros>
           <GeneratePreprocessorOutput>false</GeneratePreprocessorOutput>

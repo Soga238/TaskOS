@@ -52,6 +52,9 @@
     <Filter Include="Header files\Device-specific files\StdPeriph Drivers">
       <UniqueIdentifier>{72c92d4e-a8a0-47a9-b147-55ecf989be61}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source files\kernel\include">
+      <UniqueIdentifier>{f84336d5-d382-433a-a147-965b67aceb33}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\usr_app\main.c">
@@ -114,5 +117,19 @@
     <ClCompile Include="..\..\kernel\source\switch.c">
       <Filter>Source files\kernel</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\kernel\source\os_cpu.s">
+      <Filter>Source files\kernel</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\kernel\source\include\tk_compiler.h">
+      <Filter>Source files\kernel\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kernel\source\include\tk_types.h">
+      <Filter>Source files\kernel\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kernel\source\include\TinyOS.h">
+      <Filter>Source files\kernel\include</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

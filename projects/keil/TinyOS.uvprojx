@@ -397,6 +397,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\kernel\source\switch.c</FilePath>
             </File>
+            <File>
+              <FileName>os_cpu.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\kernel\source\os_cpu.s</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
