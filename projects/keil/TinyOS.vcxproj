@@ -81,6 +81,7 @@
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\bsp\rcc\rcc.c" />
     <ClCompile Include="..\..\kernel\source\os_cpu.s" />
     <ClCompile Include="..\..\kernel\source\switch.c" />
     <ClCompile Include="..\..\usr_app\main.c" />

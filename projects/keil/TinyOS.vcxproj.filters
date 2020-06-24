@@ -55,6 +55,12 @@
     <Filter Include="Source files\kernel\include">
       <UniqueIdentifier>{f84336d5-d382-433a-a147-965b67aceb33}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source files\bsp">
+      <UniqueIdentifier>{0286fc31-3ea4-4d4a-a177-4c0104df5599}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source files\bsp\rcc">
+      <UniqueIdentifier>{4aae162d-0edd-45b0-ad2a-92d9cd91672b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\usr_app\main.c">
@@ -119,6 +125,9 @@
     </ClCompile>
     <ClCompile Include="..\..\kernel\source\os_cpu.s">
       <Filter>Source files\kernel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\bsp\rcc\rcc.c">
+      <Filter>Source files\bsp\rcc</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

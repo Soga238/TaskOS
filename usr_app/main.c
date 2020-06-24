@@ -1,5 +1,6 @@
 #include <string.h>
 #include "..\kernel\source\include\TinyOS.h"
+#include "..\bsp\rcc\rcc.h"
 
 tTask *currentTask;
 tTask *nextTask;
@@ -7,11 +8,13 @@ tTask *nextTask;
 tTask tTask1;
 tTask tTask2;
 
-#define TASK1_ENV_SIZE   64
-#define TASK2_ENV_SIZE   64
- 
+#define TASK1_ENV_SIZE   32
+#define TASK2_ENV_SIZE   32
+
 tTaskStack task1Env[TASK1_ENV_SIZE];
 tTaskStack task2Env[TASK2_ENV_SIZE];
+
+//uint32_t
 
 tTask *taskTable[2] = {
     &tTask1, &tTask2
@@ -55,25 +58,27 @@ void task1Entry(void *argument)
 {
     unsigned long val = (unsigned long)argument;
 
+    systick_init_1ms();
+
     while (1) {
         val++;
         __nop();
-
-        tTaskSched();
     }
 }
 
 void task2Entry(void *argument)
 {
+    unsigned long val = (unsigned long)argument;
     while (1) {
+        val++;
         __nop();
-
-        tTaskSched();
     }
 }
 
 int main(void)
 {
+    rcc_init();
+
     memset(task1Env, 0xFF, sizeof(task1Env));
     memset(task2Env, 0xFF, sizeof(task2Env));
 
@@ -89,4 +94,14 @@ int main(void)
     }
 
     return 0;
+}
+
+void SysTick_Handler(void)
+{
+    static uint32_t s_wCount = 0;
+
+    // 10MS 定时周期切换任务
+    if (++s_wCount % 10 == 0) {
+        tTaskSched();
+    }
 }

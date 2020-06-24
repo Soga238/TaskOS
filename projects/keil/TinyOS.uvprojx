@@ -405,6 +405,16 @@
           </Files>
         </Group>
         <Group>
+          <GroupName>bsp/rcc</GroupName>
+          <Files>
+            <File>
+              <FileName>rcc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\bsp\rcc\rcc.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
           <GroupName>::CMSIS</GroupName>
         </Group>
         <Group>
