@@ -7,18 +7,24 @@ tTask *nextTask;
 
 tTask tTask1;
 tTask tTask2;
+tTask tTaskIdle;
 
 #define TASK1_ENV_SIZE   32
 #define TASK2_ENV_SIZE   32
+#define TASK_IDLE_ENV_SIZE  32
 
 tTaskStack task1Env[TASK1_ENV_SIZE];
 tTaskStack task2Env[TASK2_ENV_SIZE];
+tTaskStack taskIdleEnv[TASK_IDLE_ENV_SIZE];
 
 //uint32_t
 
 tTask *taskTable[2] = {
     &tTask1, &tTask2
 };
+
+void tTaskDelay(uint32_t wTicks);
+
 
 void tTaskInit(tTask *task, void(*entry)(void *), void *param, tTaskStack *stack)
 {
@@ -40,15 +46,39 @@ void tTaskInit(tTask *task, void(*entry)(void *), void *param, tTaskStack *stack
     *(--stack) = (unsigned long)0x4;                    // R4, 未用
 
     task->stack = stack;                                // 保存最终的值
-    task->delayTicks = 0;
+    task->wDelayTicks = 0;
 }
 
 void tTaskSched()
 {
+    if (currentTask == &tTaskIdle) {
+        if (taskTable[0]->wDelayTicks == 0) {
+            nextTask = taskTable[0];
+        } else if (taskTable[1]->wDelayTicks == 0) {
+            nextTask = taskTable[1];
+        } else {
+            return;
+        }
+    }
+
     if (currentTask == taskTable[0]) {
-        nextTask = taskTable[1];
-    } else {
-        nextTask = taskTable[0];
+        if (taskTable[1]->wDelayTicks == 0) {
+            nextTask = taskTable[1];
+        } else if (currentTask->wDelayTicks != 0) {
+            nextTask = &tTaskIdle;
+        } else {
+            return;
+        }
+    }
+
+    if (currentTask == taskTable[1]) {
+        if (taskTable[0]->wDelayTicks == 0) {
+            nextTask = taskTable[0];
+        } else if (currentTask->wDelayTicks != 0) {
+            nextTask = &tTaskIdle;
+        } else {
+            return;
+        }
     }
 
     tTaskSwitch();
@@ -62,7 +92,7 @@ void task1Entry(void *argument)
 
     while (1) {
         val++;
-        __nop();
+        tTaskDelay(100);
     }
 }
 
@@ -71,8 +101,33 @@ void task2Entry(void *argument)
     unsigned long val = (unsigned long)argument;
     while (1) {
         val++;
-        __nop();
+        tTaskDelay(233);
     }
+}
+
+void taskIdle(void *argument)
+{
+    while (1) {
+        tTaskDelay(123);
+    }
+}
+
+
+void tTaskSystemTickHandler(void)
+{
+    for (uint32_t i = 0; i < 2; i++) {
+        if (taskTable[i]->wDelayTicks > 0) {
+            taskTable[i]->wDelayTicks--;
+        }
+    }
+
+    tTaskSched();
+}
+
+void tTaskDelay(uint32_t wTicks)
+{
+    currentTask->wDelayTicks = wTicks;
+    tTaskSched();
 }
 
 int main(void)
@@ -84,6 +139,7 @@ int main(void)
 
     tTaskInit(&tTask1, task1Entry, (void *)0x11111111, &task1Env[TASK1_ENV_SIZE]);
     tTaskInit(&tTask2, task2Entry, (void *)0x22222222, &task2Env[TASK2_ENV_SIZE]);
+    tTaskInit(&tTaskIdle, taskIdle, (void *)0, &taskIdleEnv[TASK_IDLE_ENV_SIZE]);
 
     nextTask = taskTable[0];
 
@@ -102,6 +158,6 @@ void SysTick_Handler(void)
 
     // 10MS 定时周期切换任务
     if (++s_wCount % 10 == 0) {
-        tTaskSched();
+        tTaskSystemTickHandler();
     }
 }
