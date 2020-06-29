@@ -51,12 +51,15 @@ void tTaskInit(tTask *task, void(*entry)(void *), void *param, tTaskStack *stack
 
 void tTaskSched()
 {
+    uint32_t status = tTaskEnterCritical();
+    
     if (currentTask == &tTaskIdle) {
         if (taskTable[0]->wDelayTicks == 0) {
             nextTask = taskTable[0];
         } else if (taskTable[1]->wDelayTicks == 0) {
             nextTask = taskTable[1];
         } else {
+            tTaskExitCritical(status);
             return;
         }
     }
@@ -67,6 +70,7 @@ void tTaskSched()
         } else if (currentTask->wDelayTicks != 0) {
             nextTask = &tTaskIdle;
         } else {
+            tTaskExitCritical(status);
             return;
         }
     }
@@ -77,11 +81,13 @@ void tTaskSched()
         } else if (currentTask->wDelayTicks != 0) {
             nextTask = &tTaskIdle;
         } else {
+            tTaskExitCritical(status);
             return;
         }
     }
 
     tTaskSwitch();
+    tTaskExitCritical(status);
 }
 
 void task1Entry(void *argument)
@@ -92,11 +98,17 @@ void task1Entry(void *argument)
 
     while (1) {
         val++;
+
+        uint32_t status = tTaskEnterCritical();
+
         uint32_t tick = g_wTickCount;
         for (int32_t i = 0; i < 0xFFFF; i++) {
             ;
         }
-        g_wTickCount = tick + 1;;
+        g_wTickCount = tick + 1;
+
+        tTaskExitCritical(status);
+
         tTaskDelay(100);
     }
 }
@@ -120,6 +132,7 @@ void taskIdle(void *argument)
 
 void tTaskSystemTickHandler(void)
 {
+    uint32_t status = tTaskEnterCritical();
     for (uint32_t i = 0; i < 2; i++) {
         if (taskTable[i]->wDelayTicks > 0) {
             taskTable[i]->wDelayTicks--;
@@ -127,12 +140,17 @@ void tTaskSystemTickHandler(void)
     }
 
     tTaskSched();
+    tTaskExitCritical(status);
 }
 
 void tTaskDelay(uint32_t wTicks)
 {
+    uint32_t status = tTaskEnterCritical();
+    
     currentTask->wDelayTicks = wTicks;
     tTaskSched();
+    
+    tTaskExitCritical(status);
 }
 
 int main(void)
@@ -150,9 +168,9 @@ int main(void)
 
     tTaskRunFirst();
 
-    while (1) {
-        ;
-    }
+//    while (1) {
+//        ;
+//    }
 
     return 0;
 }

@@ -23,3 +23,16 @@ void tTaskSwitch(void)
     MEM32(NVIC_INT_CTRL) = NVIC_PENDSVSET;
 }
 
+// 进入临界区
+uint32_t tTaskEnterCritical()
+{
+    uint32_t status = __get_PRIMASK();
+    __set_PRIMASK(1);
+    return 0;
+}
+
+// 退出临界区
+void tTaskExitCritical(uint32_t status)
+{
+    __set_PRIMASK(status);
+}

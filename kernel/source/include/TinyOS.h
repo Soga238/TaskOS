@@ -1,4 +1,5 @@
-#pragma once
+#ifndef TINYOS_H
+#define TINYOS_H
 
 #include ".\tk_compiler.h"
 #include ".\tk_types.h"
@@ -15,3 +16,9 @@ extern tTask* nextTask;
 
 extern void tTaskSwitch(void);
 extern void tTaskRunFirst(void);
+
+extern uint32_t tTaskEnterCritical(void);
+
+extern void tTaskExitCritical(uint32_t status);
+
+#endif
