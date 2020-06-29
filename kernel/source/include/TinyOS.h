@@ -18,7 +18,10 @@ extern void tTaskSwitch(void);
 extern void tTaskRunFirst(void);
 
 extern uint32_t tTaskEnterCritical(void);
-
 extern void tTaskExitCritical(uint32_t status);
+
+extern void tTaskSchedInit(void);
+extern void tTaskSchedDisable(void);
+extern void tTaskSchedEnable(void);
 
 #endif

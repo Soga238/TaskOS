@@ -17,11 +17,14 @@ tTaskStack task1Env[TASK1_ENV_SIZE];
 tTaskStack task2Env[TASK2_ENV_SIZE];
 tTaskStack taskIdleEnv[TASK_IDLE_ENV_SIZE];
 
-uint32_t g_wTickCount;
 
 tTask *taskTable[2] = {
     &tTask1, &tTask2
 };
+
+int32_t shareCount;
+
+uint8_t schedLockCount;
 
 void tTaskDelay(uint32_t wTicks);
 
@@ -52,6 +55,11 @@ void tTaskInit(tTask *task, void(*entry)(void *), void *param, tTaskStack *stack
 void tTaskSched()
 {
     uint32_t status = tTaskEnterCritical();
+
+    if (schedLockCount > 0) {   // 判断上锁退出任务
+        tTaskExitCritical(status);
+        return;
+    }
     
     if (currentTask == &tTaskIdle) {
         if (taskTable[0]->wDelayTicks == 0) {
@@ -90,6 +98,36 @@ void tTaskSched()
     tTaskExitCritical(status);
 }
 
+void tTaskSchedInit(void)
+{
+    schedLockCount = 0;
+}
+
+void tTaskSchedDisable(void)
+{
+    uint32_t status = tTaskEnterCritical();
+
+    if (schedLockCount < 255) {
+        schedLockCount++;
+    }
+
+    tTaskExitCritical(status);
+}
+
+void tTaskSchedEnable(void)
+{
+    uint32_t status = tTaskEnterCritical();
+
+    if (schedLockCount > 0) {
+        if (--schedLockCount == 0) {
+            tTaskSched();   // 切换任务
+        }
+    }
+
+    tTaskExitCritical(status);
+}
+
+
 void task1Entry(void *argument)
 {
     unsigned long val = (unsigned long)argument;
@@ -97,19 +135,16 @@ void task1Entry(void *argument)
     systick_init_1ms();
 
     while (1) {
+
+        tTaskSchedDisable();    // 上锁
+
+        val = shareCount;
+        tTaskDelay(5);         // 上锁后禁止延时调度
         val++;
+        shareCount = val;
 
-        uint32_t status = tTaskEnterCritical();
+        tTaskSchedEnable();
 
-        uint32_t tick = g_wTickCount;
-        for (int32_t i = 0; i < 0xFFFF; i++) {
-            ;
-        }
-        g_wTickCount = tick + 1;
-
-        tTaskExitCritical(status);
-
-        tTaskDelay(100);
     }
 }
 
@@ -117,8 +152,11 @@ void task2Entry(void *argument)
 {
     unsigned long val = (unsigned long)argument;
     while (1) {
-        val++;
-        tTaskDelay(233);
+        tTaskSchedDisable();    // 上锁
+        shareCount++;
+        tTaskSchedEnable();
+        
+        tTaskDelay(1);
     }
 }
 
@@ -177,8 +215,6 @@ int main(void)
 
 void SysTick_Handler(void)
 {
-    g_wTickCount++;
-
     static uint32_t s_wCount = 0;
 
     // 10MS 定时周期切换任务
