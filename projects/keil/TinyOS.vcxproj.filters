@@ -61,6 +61,12 @@
     <Filter Include="Source files\bsp\rcc">
       <UniqueIdentifier>{4aae162d-0edd-45b0-ad2a-92d9cd91672b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header files\bsp">
+      <UniqueIdentifier>{18b35e84-6ec0-41f0-92c0-6b7bb7590aae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header files\bsp\rcc">
+      <UniqueIdentifier>{848bf7b5-15b8-460e-a19f-4b61d723454c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\usr_app\main.c">

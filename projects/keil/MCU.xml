@@ -76,7 +76,7 @@
     <AllDependencies>
       <ProjectDependency>
         <RelativePath>TinyOS.uvprojx</RelativePath>
-        <Timestamp>132373718386143395</Timestamp>
+        <Timestamp>132374572132992139</Timestamp>
       </ProjectDependency>
     </AllDependencies>
     <RootDirectory>
@@ -96,6 +96,20 @@
               <RelativePath>..\..\kernel\source\switch.c</RelativePath>
             </VirtualFileSnapshot>
           </Files>
+        </VirtualDirectorySnapshot>
+        <VirtualDirectorySnapshot>
+          <Name>bsp</Name>
+          <Subdirectories>
+            <VirtualDirectorySnapshot>
+              <Name>rcc</Name>
+              <Files>
+                <VirtualFileSnapshot>
+                  <RelativePath>..\..\bsp\rcc\rcc.c</RelativePath>
+                </VirtualFileSnapshot>
+              </Files>
+            </VirtualDirectorySnapshot>
+          </Subdirectories>
+          <Files />
         </VirtualDirectorySnapshot>
         <VirtualDirectorySnapshot>
           <Name>::CMSIS</Name>

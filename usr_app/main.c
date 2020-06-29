@@ -17,7 +17,7 @@ tTaskStack task1Env[TASK1_ENV_SIZE];
 tTaskStack task2Env[TASK2_ENV_SIZE];
 tTaskStack taskIdleEnv[TASK_IDLE_ENV_SIZE];
 
-//uint32_t
+uint32_t g_wTickCount;
 
 tTask *taskTable[2] = {
     &tTask1, &tTask2
@@ -92,6 +92,11 @@ void task1Entry(void *argument)
 
     while (1) {
         val++;
+        uint32_t tick = g_wTickCount;
+        for (int32_t i = 0; i < 0xFFFF; i++) {
+            ;
+        }
+        g_wTickCount = tick + 1;;
         tTaskDelay(100);
     }
 }
@@ -154,6 +159,8 @@ int main(void)
 
 void SysTick_Handler(void)
 {
+    g_wTickCount++;
+
     static uint32_t s_wCount = 0;
 
     // 10MS 定时周期切换任务
