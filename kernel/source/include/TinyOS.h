@@ -9,10 +9,17 @@
 
 typedef uint32_t tTaskStack;
 
+#define TINYOS_TASK_STATE_RDY           0
+#define TINYOS_TASK_STATE_DELAYED       1
+
 typedef struct {
     tTaskStack* stack;
     uint32_t wDelayTicks;   // 任务延时计数器
     uint32_t prio;  // 优先级
+
+    tNode delayNode;
+    uint32_t state;
+
 } tTask;
 
 extern tTask* currentTask;
