@@ -171,10 +171,7 @@ void task2Entry(void *argument)
 void taskIdle(void *argument)
 {
     while (1) {
-        tTaskDelay(1);
-        __nop();
-        tTaskDelay(1);
-        __nop();
+        // 不要添加延时，演示OS不完善，会导致bug
     }
 }
 
