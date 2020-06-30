@@ -17,15 +17,17 @@ tTaskStack task1Env[TASK1_ENV_SIZE];
 tTaskStack task2Env[TASK2_ENV_SIZE];
 tTaskStack taskIdleEnv[TASK_IDLE_ENV_SIZE];
 
-tTask *taskTable[2] = {
+tTask *taskTable[TINYOS_PRIO_COUNT] = {
     &tTask1, &tTask2
 };
+
+tBitmap taskPrioBitmap;
 
 uint8_t schedLockCount;
 
 void tTaskDelay(uint32_t wTicks);
 
-void tTaskInit(tTask *task, void(*entry)(void *), void *param, tTaskStack *stack)
+void tTaskInit(tTask *task, void(*entry)(void *), void *param, uint32_t prio,tTaskStack *stack)
 {
     *(--stack) = (unsigned long)(1 << 24);              // XPSR, 设置了Thumb模式，恢复到Thumb状态而非ARM状态运行
     *(--stack) = (unsigned long)entry;                  // 程序的入口地址
@@ -46,6 +48,17 @@ void tTaskInit(tTask *task, void(*entry)(void *), void *param, tTaskStack *stack
 
     task->stack = stack;                                // 保存最终的值
     task->wDelayTicks = 0;
+    task->prio = prio;
+    
+    taskTable[prio] = task;
+    tBitmapSet(&taskPrioBitmap, prio);
+}
+
+// 返回优先级最好的就绪任务块指针
+tTask * tTaskHighestReady(void)
+{
+    uint32_t prio = tBitmapGetFirstSet(&taskPrioBitmap);
+    return taskTable[prio];
 }
 
 void tTaskSched()
@@ -57,46 +70,21 @@ void tTaskSched()
         return;
     }
     
-    if (currentTask == &tTaskIdle) {
-        if (taskTable[0]->wDelayTicks == 0) {
-            nextTask = taskTable[0];
-        } else if (taskTable[1]->wDelayTicks == 0) {
-            nextTask = taskTable[1];
-        } else {
-            tTaskExitCritical(status);
-            return;
-        }
+    // 不是当前任务才切换
+    // NOTE: 视频代码bug，未判断空指针 
+    tTask* task = tTaskHighestReady();
+    if (NULL != task && task != currentTask) {
+        nextTask = task;
+        tTaskSwitch();
     }
-
-    if (currentTask == taskTable[0]) {
-        if (taskTable[1]->wDelayTicks == 0) {
-            nextTask = taskTable[1];
-        } else if (currentTask->wDelayTicks != 0) {
-            nextTask = &tTaskIdle;
-        } else {
-            tTaskExitCritical(status);
-            return;
-        }
-    }
-
-    if (currentTask == taskTable[1]) {
-        if (taskTable[0]->wDelayTicks == 0) {
-            nextTask = taskTable[0];
-        } else if (currentTask->wDelayTicks != 0) {
-            nextTask = &tTaskIdle;
-        } else {
-            tTaskExitCritical(status);
-            return;
-        }
-    }
-
-    tTaskSwitch();
+    
     tTaskExitCritical(status);
 }
 
 void tTaskSchedInit(void)
 {
     schedLockCount = 0;
+    tBitmapInit(&taskPrioBitmap);
 }
 
 void tTaskSchedDisable(void)
@@ -125,43 +113,34 @@ void tTaskSchedEnable(void)
 
 
 void task1Entry(void *argument)
-{
-    unsigned long val = (unsigned long)argument;
-    volatile int pos = 0;
-    
+{    
     systick_init_1ms();
 
-    tBitmap map;
-
-    tBitmapInit(&map);
-
-    for (int32_t i = 0; i < tBitmapPosCount(); i++) {
-        tBitmapSet(&map, i);
-    }
-
-    for (int32_t i = 0; i < tBitmapPosCount(); i++) {
-        tBitmapClear(&map, i);
-        pos = tBitmapGetFirstSet(&map);
-    }
-
     while (1) {
-
+        tTaskDelay(1);
+        __nop();
+        tTaskDelay(1);
+        __nop();
     }
 }
 
 void task2Entry(void *argument)
 {
-    unsigned long val = (unsigned long)argument;
     while (1) {
-
         tTaskDelay(1);
+        __nop();
+        tTaskDelay(1);
+        __nop();
     }
 }
 
 void taskIdle(void *argument)
 {
     while (1) {
-        tTaskDelay(123);
+        tTaskDelay(1);
+        __nop();
+        tTaskDelay(1);
+        __nop();
     }
 }
 
@@ -169,10 +148,22 @@ void taskIdle(void *argument)
 void tTaskSystemTickHandler(void)
 {
     uint32_t status = tTaskEnterCritical();
-    for (uint32_t i = 0; i < 2; i++) {
+    
+    for (uint32_t i = 0; i < TINYOS_PRIO_COUNT; i++) {
+        
+        // 视频这里有bug  taskTable里有空指针
+        if (taskTable[i] == NULL) {
+            continue;
+        }
+        
         if (taskTable[i]->wDelayTicks > 0) {
             taskTable[i]->wDelayTicks--;
         }
+        
+        if (taskTable[i]->wDelayTicks == 0) {
+            tBitmapSet(&taskPrioBitmap, i);
+        }
+        
     }
 
     tTaskSched();
@@ -183,6 +174,8 @@ void tTaskDelay(uint32_t wTicks)
 {
     uint32_t status = tTaskEnterCritical();
     
+    // 通过优先级挂起当前任务
+    tBitmapClear(&taskPrioBitmap, currentTask->prio);
     currentTask->wDelayTicks = wTicks;
     tTaskSched();
     
@@ -196,11 +189,11 @@ int main(void)
     memset(task1Env, 0xFF, sizeof(task1Env));
     memset(task2Env, 0xFF, sizeof(task2Env));
 
-    tTaskInit(&tTask1, task1Entry, (void *)0x11111111, &task1Env[TASK1_ENV_SIZE]);
-    tTaskInit(&tTask2, task2Entry, (void *)0x22222222, &task2Env[TASK2_ENV_SIZE]);
-    tTaskInit(&tTaskIdle, taskIdle, (void *)0, &taskIdleEnv[TASK_IDLE_ENV_SIZE]);
+    tTaskInit(&tTask1, task1Entry, (void *)0x11111111, 0, &task1Env[TASK1_ENV_SIZE]);
+    tTaskInit(&tTask2, task2Entry, (void *)0x22222222, 1, &task2Env[TASK2_ENV_SIZE]);
+    tTaskInit(&tTaskIdle, taskIdle, (void *)0, TINYOS_PRIO_COUNT - 1, &taskIdleEnv[TASK_IDLE_ENV_SIZE]);
 
-    nextTask = taskTable[0];
+    nextTask = tTaskHighestReady();
 
     tTaskRunFirst();
 

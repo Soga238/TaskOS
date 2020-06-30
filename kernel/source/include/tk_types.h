@@ -2,5 +2,6 @@
 #define TK_COMPILER_H
 
 #include <stdint.h>
+#include <stdlib.h>
 
 #endif // !TK_COMPILER_H

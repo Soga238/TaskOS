@@ -4,6 +4,7 @@
 #include ".\tk_compiler.h"
 #include ".\tk_types.h"
 
+#include ".\tConfig.h"
 #include ".\tLib.h"
 
 typedef uint32_t tTaskStack;
@@ -11,6 +12,7 @@ typedef uint32_t tTaskStack;
 typedef struct {
     tTaskStack* stack;
     uint32_t wDelayTicks;   // 任务延时计数器
+    uint32_t prio;  // 优先级
 } tTask;
 
 extern tTask* currentTask;
