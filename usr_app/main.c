@@ -17,17 +17,13 @@ tTaskStack task1Env[TASK1_ENV_SIZE];
 tTaskStack task2Env[TASK2_ENV_SIZE];
 tTaskStack taskIdleEnv[TASK_IDLE_ENV_SIZE];
 
-
 tTask *taskTable[2] = {
     &tTask1, &tTask2
 };
 
-int32_t shareCount;
-
 uint8_t schedLockCount;
 
 void tTaskDelay(uint32_t wTicks);
-
 
 void tTaskInit(tTask *task, void(*entry)(void *), void *param, tTaskStack *stack)
 {
@@ -131,19 +127,24 @@ void tTaskSchedEnable(void)
 void task1Entry(void *argument)
 {
     unsigned long val = (unsigned long)argument;
-
+    volatile int pos = 0;
+    
     systick_init_1ms();
 
+    tBitmap map;
+
+    tBitmapInit(&map);
+
+    for (int32_t i = 0; i < tBitmapPosCount(); i++) {
+        tBitmapSet(&map, i);
+    }
+
+    for (int32_t i = 0; i < tBitmapPosCount(); i++) {
+        tBitmapClear(&map, i);
+        pos = tBitmapGetFirstSet(&map);
+    }
+
     while (1) {
-
-        tTaskSchedDisable();    // 上锁
-
-        val = shareCount;
-        tTaskDelay(5);         // 上锁后禁止延时调度
-        val++;
-        shareCount = val;
-
-        tTaskSchedEnable();
 
     }
 }
@@ -152,10 +153,7 @@ void task2Entry(void *argument)
 {
     unsigned long val = (unsigned long)argument;
     while (1) {
-        tTaskSchedDisable();    // 上锁
-        shareCount++;
-        tTaskSchedEnable();
-        
+
         tTaskDelay(1);
     }
 }

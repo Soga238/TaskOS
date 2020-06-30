@@ -402,6 +402,11 @@
               <FileType>2</FileType>
               <FilePath>..\..\kernel\source\os_cpu.s</FilePath>
             </File>
+            <File>
+              <FileName>tBitmap.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\kernel\source\tBitmap.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

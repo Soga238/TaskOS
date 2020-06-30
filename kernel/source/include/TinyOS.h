@@ -4,6 +4,8 @@
 #include ".\tk_compiler.h"
 #include ".\tk_types.h"
 
+#include ".\tLib.h"
+
 typedef uint32_t tTaskStack;
 
 typedef struct {

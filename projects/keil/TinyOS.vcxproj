@@ -84,6 +84,7 @@
     <ClCompile Include="..\..\bsp\rcc\rcc.c" />
     <ClCompile Include="..\..\kernel\source\os_cpu.s" />
     <ClCompile Include="..\..\kernel\source\switch.c" />
+    <ClCompile Include="..\..\kernel\source\tBitmap.c" />
     <ClCompile Include="..\..\usr_app\main.c" />
     <None Include="mcu.props" />
     <ClInclude Include="$(BSP_ROOT)\Device\Include\stm32f10x.h" />

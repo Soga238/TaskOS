@@ -135,6 +135,9 @@
     <ClCompile Include="..\..\bsp\rcc\rcc.c">
       <Filter>Source files\bsp\rcc</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\kernel\source\tBitmap.c">
+      <Filter>Source files\kernel</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\kernel\source\include\tk_compiler.h">
