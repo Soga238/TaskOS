@@ -428,9 +428,9 @@
               <FilePath>..\..\kernel\source\include\tLib.h</FilePath>
             </File>
             <File>
-              <FileName>dlink.c</FileName>
+              <FileName>tList.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\kernel\source\dlink.c</FilePath>
+              <FilePath>..\..\kernel\source\tList.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -111,10 +111,23 @@ void tTaskSchedEnable(void)
     tTaskExitCritical(status);
 }
 
+tList list;
+tNode node[8];
 
 void task1Entry(void *argument)
 {    
     systick_init_1ms();
+
+    tListInit(&list);
+    for (int32_t i = 0; i < 8; i++) {
+        tNodeInit(&node[i]);
+        tListAddFirst(&list, &node[i]);
+    }
+
+    for (int32_t i = 0; i < 8; i++) {
+        tListRemoveFirst(&list);
+    }
+
 
     while (1) {
         tTaskDelay(1);
