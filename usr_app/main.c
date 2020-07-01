@@ -7,19 +7,34 @@ tTask *nextTask;
 
 tTask tTask1;
 tTask tTask2;
+tTask tTask3;
 tTask tTaskIdle;
 
 #define TASK1_ENV_SIZE   32
 #define TASK2_ENV_SIZE   32
+#define TASK3_ENV_SIZE   32
 #define TASK_IDLE_ENV_SIZE  32
 
 tTaskStack task1Env[TASK1_ENV_SIZE];
 tTaskStack task2Env[TASK2_ENV_SIZE];
-tTaskStack taskIdleEnv[TASK_IDLE_ENV_SIZE];
+tTaskStack task3Env[TASK3_ENV_SIZE];
 
-tTask *taskTable[TINYOS_PRIO_COUNT] = {
-    &tTask1, &tTask2
-};
+tTaskStack taskIdleEnv[TASK_IDLE_ENV_SIZE];
+/*
+    taskTable 每个优先级都有一个任务链表
+
+    ++++++++++++
+        list    prio = 0
+    ++++++++++++
+        list    prio = 1
+    +++++++++++
+        ...
+    +++++++++++
+        list    prio = 31
+    +++++++++++
+
+*/
+tList taskTable[TINYOS_PRIO_COUNT];
 
 tBitmap taskPrioBitmap;
 uint8_t schedLockCount;
@@ -51,17 +66,21 @@ void tTaskInit(tTask *task, void(*entry)(void *), void *param, uint32_t prio, tT
     task->prio = prio;
 
     task->state = TINYOS_TASK_STATE_RDY;
-    tNodeInit(&task->delayNode);
+    tNodeInit(&task->delayNode);                        // 时间延时链表中
 
-    taskTable[prio] = task;
+    task->slice = TINYOS_SLICE_MAX;
+    tNodeInit(&task->linkNode);
+    tListAddFirst(&taskTable[prio], &task->linkNode);   // 加入到优先级链表中
+
     tBitmapSet(&taskPrioBitmap, prio);
 }
 
 // 返回优先级最好的就绪任务块指针
 tTask *tTaskHighestReady(void)
 {
-    uint32_t prio = tBitmapGetFirstSet(&taskPrioBitmap);
-    return taskTable[prio];
+    uint32_t highestPrio = tBitmapGetFirstSet(&taskPrioBitmap);
+    tNode *node = tListFirst(&taskTable[highestPrio]);  // 从最高优先级链表中取出首个节点
+    return tNodeParent(node, tTask, linkNode);  // 将node节点转换成任务指针
 }
 
 void tTaskDelayedListInit()
@@ -71,7 +90,7 @@ void tTaskDelayedListInit()
 
 void tTimeTaskWait(tTask *task, uint32_t ticks)
 {
-    // 插入延时队列
+    // 插入延时链表
     task->wDelayTicks = ticks;
     tListAddLast(&tTaskDelayedList, &task->delayNode);
     task->state |= TINYOS_TASK_STATE_DELAYED;
@@ -79,21 +98,23 @@ void tTimeTaskWait(tTask *task, uint32_t ticks)
 
 void tTimeTaskWakeUp(tTask *task)
 {
-    // 从延时队列移除任务
+    // 从延时链表移除任务
     tListRemove(&tTaskDelayedList, &task->delayNode);
     task->state &= ~TINYOS_TASK_STATE_RDY;
 }
 
 void tTaskScedRdy(tTask *task)
 {
-    taskTable[task->prio] = task;
+    tListAddFirst(&taskTable[task->prio], &task->linkNode); // 插入有优先级链表
     tBitmapSet(&taskPrioBitmap, task->prio);
 }
 
 void tTaskScedUnRdy(tTask *task)
 {
-    taskTable[task->prio] = NULL;
-    tBitmapClear(&taskPrioBitmap, task->prio);
+    tListRemove(&taskTable[task->prio], &task->linkNode);// 从优先级链表删除
+    if (tListCount(&taskTable[task->prio]) == 0) {
+        tBitmapClear(&taskPrioBitmap, task->prio);  // 该优先级没有任务了，才能把该优先级标志位清0
+    }
 }
 
 void tTaskSched()
@@ -120,6 +141,10 @@ void tTaskSchedInit(void)
 {
     schedLockCount = 0;
     tBitmapInit(&taskPrioBitmap);
+
+    for (int32_t i = 0; i < TINYOS_PRIO_COUNT; i++) {
+        tListInit(&taskTable[i]);   // 初始化每个优先级的对应链表
+    }
 }
 
 void tTaskSchedDisable(void)
@@ -146,25 +171,41 @@ void tTaskSchedEnable(void)
     tTaskExitCritical(status);
 }
 
+int32_t taskFlag1;
+int32_t taskFlag2;
+int32_t taskFlag3;
+
 void task1Entry(void *argument)
 {
     systick_init_1ms();
 
     while (1) {
         tTaskDelay(1);
-        __nop();
+        taskFlag1 = 1;
         tTaskDelay(1);
-        __nop();
+        taskFlag1 = 0;
     }
 }
+
+#define DELAY() do{for(int32_t i = 0; i < 0xFF; i++){}}while(0)
 
 void task2Entry(void *argument)
 {
     while (1) {
-        tTaskDelay(1);
-        __nop();
-        tTaskDelay(1);
-        __nop();
+        DELAY();
+        taskFlag2 = 1;
+        DELAY();
+        taskFlag2 = 0;
+    }
+}
+
+void task3Entry(void *argument)
+{
+    while (1) {
+        DELAY();
+        taskFlag3 = 1;
+        DELAY();
+        taskFlag3 = 0;
     }
 }
 
@@ -179,19 +220,30 @@ void tTaskSystemTickHandler(void)
 {
     uint32_t status = tTaskEnterCritical();
     tNode *node;
-    tTask* task;
+    tTask *task;
 
+    // 所有的延时任务，从优先级链表删除后，都插入到了延时链表中
     for (node = tTaskDelayedList.headNode.nextNode;
          node != &(tTaskDelayedList.headNode);
          node = node->nextNode) {
 
         task = tNodeParent(node, tTask, delayNode);
         if (--task->wDelayTicks == 0) {
-            tTimeTaskWakeUp(task);// 将task任务从延时队列删除
+            tTimeTaskWakeUp(task);// 将task任务从延时链表删除
             tTaskScedRdy(task);// 插入到就绪任务表中
         }
     }
 
+    // 某个优先级下，首个任务时间片减为0后，第二个任务递进到首位，释放的任务排到末尾
+    if (--currentTask->slice == 0) {
+        if (0 < tListCount(&taskTable[currentTask->prio])) {
+            tListRemoveFirst(&taskTable[currentTask->prio]);
+            tListAddLast(&taskTable[currentTask->prio], &currentTask->linkNode);
+            currentTask->slice = TINYOS_SLICE_MAX;
+        }
+    }
+
+    // 当前调度的模型是：只有最高优先级的任务链表都处于休眠状态，才能执行低优先级的任务
     tTaskSched();
     tTaskExitCritical(status);
 }
@@ -200,7 +252,7 @@ void tTaskDelay(uint32_t wTicks)
 {
     uint32_t status = tTaskEnterCritical();
 
-    tTimeTaskWait(currentTask, wTicks); // 将当前任务插入延时队列
+    tTimeTaskWait(currentTask, wTicks); // 将当前任务插入延时链表
     tTaskScedUnRdy(currentTask); // 从就绪任务表中删除当前任务
 
     tTaskSched();
@@ -214,11 +266,15 @@ int main(void)
 
     memset(task1Env, 0xFF, sizeof(task1Env));
     memset(task2Env, 0xFF, sizeof(task2Env));
+    memset(task3Env, 0xFF, sizeof(task3Env));
 
-    tListInit(&tTaskDelayedList);
+    tTaskDelayedListInit();
+    tTaskSchedInit();
 
     tTaskInit(&tTask1, task1Entry, (void *)0x11111111, 0, &task1Env[TASK1_ENV_SIZE]);
     tTaskInit(&tTask2, task2Entry, (void *)0x22222222, 1, &task2Env[TASK2_ENV_SIZE]);
+    tTaskInit(&tTask3, task3Entry, (void *)0x33333333, 1, &task3Env[TASK3_ENV_SIZE]);
+
     tTaskInit(&tTaskIdle, taskIdle, (void *)0, TINYOS_PRIO_COUNT - 1, &taskIdleEnv[TASK_IDLE_ENV_SIZE]);
 
     nextTask = tTaskHighestReady();

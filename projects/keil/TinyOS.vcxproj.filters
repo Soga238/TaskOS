@@ -141,6 +141,9 @@
     <ClCompile Include="..\..\kernel\source\tList.c">
       <Filter>Source files\kernel</Filter>
     </ClCompile>
+    <ClInclude Include="..\..\kernel\source\include\tLib.h">
+      <Filter>Header files\kernel</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\kernel\source\include\tk_compiler.h">

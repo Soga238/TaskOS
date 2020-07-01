@@ -46,7 +46,7 @@ void tListInsertAfter(tList* list, tNode* nodeAfter, tNode* nodeToInsert);
 void tListRemove(tList* list, tNode* node);
 
 
-#define tNodeParent(node, parent, name) \
-    (parent *)((uint32_t)node - (uint32_t)&((parent *)0)->name)
+#define tNodeParent(node, parent, node_name) \
+    (parent *)((uint32_t)node - (uint32_t)&((parent *)0)->node_name)
 
 #endif

@@ -108,5 +108,6 @@
     <ClInclude Include="$(TOOLCHAIN_ROOT)\..\pack\Keil\STM32F1xx_DFP\2.3.0\Device\StdPeriph_Driver\inc\stm32f10x_flash.h" />
     <ClInclude Include="$(TOOLCHAIN_ROOT)\..\pack\Keil\STM32F1xx_DFP\2.3.0\Device\StdPeriph_Driver\inc\stm32f10x_gpio.h" />
     <ClInclude Include="$(TOOLCHAIN_ROOT)\..\pack\Keil\STM32F1xx_DFP\2.3.0\Device\StdPeriph_Driver\inc\stm32f10x_rcc.h" />
+    <ClInclude Include="..\..\kernel\source\include\tLib.h" />
   </ItemGroup>
 </Project>
