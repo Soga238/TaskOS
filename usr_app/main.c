@@ -163,8 +163,6 @@ void tTaskSystemTickHandler(void)
     tTaskExitCritical(status);
 }
 
-
-
 int main(void)
 {
     rcc_init();

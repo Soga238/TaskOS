@@ -24,10 +24,10 @@ void task1Entry(void *argument)
     systick_init_1ms();
 
     while (1) {
-        tTaskDelay(1);
         taskFlag1 = 1;
-        tTaskDelay(1);
+        tTaskSuspend(currentTask);
         taskFlag1 = 0;
+        tTaskSuspend(currentTask);
     }
 }
 
@@ -36,20 +36,22 @@ void task1Entry(void *argument)
 void task2Entry(void *argument)
 {
     while (1) {
-        DELAY();
         taskFlag2 = 1;
-        DELAY();
+        tTaskDelay(1);
+        tTaskWakeUp(&tTask1);
         taskFlag2 = 0;
+        tTaskDelay(1);
+        tTaskWakeUp(&tTask1);
     }
 }
 
 void task3Entry(void *argument)
 {
     while (1) {
-        DELAY();
         taskFlag3 = 1;
-        DELAY();
+        tTaskDelay(1);
         taskFlag3 = 0;
+        tTaskDelay(1);
     }
 }
 

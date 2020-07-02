@@ -10,7 +10,8 @@
 typedef uint32_t tTaskStack;
 
 #define TINYOS_TASK_STATE_RDY           0
-#define TINYOS_TASK_STATE_DELAYED       1
+#define TINYOS_TASK_STATE_DELAYED       (1u << 1)
+#define TINYOS_TASK_STATE_SUSPEND       (1u << 2)
 
 #define TINYOS_SLICE_MAX                10
 
@@ -19,15 +20,15 @@ typedef uint32_t tTaskStack;
 typedef struct {
     tTaskStack *stack;
     uint32_t wDelayTicks;   // 任务延时计数器
-    uint32_t prio;  // 优先级
+    uint32_t prio;          // 优先级
 
     tNode delayNode;
     uint32_t state;
 
     tNode linkNode;
-    uint32_t slice; // 时间片
+    uint32_t slice;         // 时间片
 
-    //uint32_t suspendC;
+    uint32_t suspendCount;
 
 } tTask;
 
@@ -57,6 +58,10 @@ extern void tTaskScedRdy(tTask *task);
 extern void tTaskScedUnRdy(tTask *task);
 
 extern void tTaskDelay(uint32_t wTicks);
+
+extern void tTaskSuspend(tTask* task);
+
+extern void tTaskWakeUp(tTask* task);
 
 extern void tTaskSystemTickHandler(void);
 

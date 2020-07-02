@@ -31,3 +31,46 @@ void tTaskInit(tTask *task, void(*entry)(void *), void *param, uint32_t prio, tT
     
     tTaskScedRdy(task);
 }
+
+// 挂起任务，将优先级任务链表中删除
+void tTaskSuspend(tTask* task)
+{
+    uint32_t status = tTaskEnterCritical();
+
+    // 延时状态的任务不能被挂起
+    if (!(task->state & TINYOS_TASK_STATE_SUSPEND)) {
+        
+        // 可能已经处于挂起状态了
+        if (++task->suspendCount <= 1) {
+            tTaskScedUnRdy(task);
+            task->state |= TINYOS_TASK_STATE_SUSPEND;
+
+            if (task == currentTask) {
+                tTaskSched();
+            }
+        }
+    }
+
+    tTaskExitCritical(status);
+}
+
+// 恢复被挂起的任务
+void tTaskWakeUp(tTask *task)
+{
+    uint32_t status = tTaskEnterCritical();
+
+    // 延时状态的任务不能被挂起
+    if (task->state & TINYOS_TASK_STATE_SUSPEND) {
+
+        // 可能已经处于挂起状态了
+        if (--task->suspendCount == 0) {
+            tTaskScedRdy(task);
+            task->state &= ~TINYOS_TASK_STATE_SUSPEND;
+
+            // 触发一次任务调度，当前任务可能是最高优先级的任务
+            tTaskSched();
+        }
+    }
+
+    tTaskExitCritical(status);
+}
