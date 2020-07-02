@@ -387,6 +387,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\usr_app\main.c</FilePath>
             </File>
+            <File>
+              <FileName>usr_app.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\usr_app\usr_app.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -431,6 +436,21 @@
               <FileName>tList.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\kernel\source\tList.c</FilePath>
+            </File>
+            <File>
+              <FileName>tTask.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\kernel\source\tTask.c</FilePath>
+            </File>
+            <File>
+              <FileName>tTime.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\kernel\source\tTime.c</FilePath>
+            </File>
+            <File>
+              <FileName>tCpu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\kernel\source\tCpu.c</FilePath>
             </File>
           </Files>
         </Group>

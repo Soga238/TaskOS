@@ -76,7 +76,7 @@
     <AllDependencies>
       <ProjectDependency>
         <RelativePath>TinyOS.uvprojx</RelativePath>
-        <Timestamp>132380473387564524</Timestamp>
+        <Timestamp>132380705689042798</Timestamp>
       </ProjectDependency>
     </AllDependencies>
     <RootDirectory>
@@ -86,6 +86,9 @@
           <Files>
             <VirtualFileSnapshot>
               <RelativePath>..\..\usr_app\main.c</RelativePath>
+            </VirtualFileSnapshot>
+            <VirtualFileSnapshot>
+              <RelativePath>..\..\usr_app\usr_app.c</RelativePath>
             </VirtualFileSnapshot>
           </Files>
         </VirtualDirectorySnapshot>
@@ -112,6 +115,15 @@
             </VirtualFileSnapshot>
             <VirtualFileSnapshot>
               <RelativePath>..\..\kernel\source\tList.c</RelativePath>
+            </VirtualFileSnapshot>
+            <VirtualFileSnapshot>
+              <RelativePath>..\..\kernel\source\tTask.c</RelativePath>
+            </VirtualFileSnapshot>
+            <VirtualFileSnapshot>
+              <RelativePath>..\..\kernel\source\tTime.c</RelativePath>
+            </VirtualFileSnapshot>
+            <VirtualFileSnapshot>
+              <RelativePath>..\..\kernel\source\tCpu.c</RelativePath>
             </VirtualFileSnapshot>
           </Files>
         </VirtualDirectorySnapshot>

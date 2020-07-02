@@ -109,5 +109,9 @@
     <ClInclude Include="$(TOOLCHAIN_ROOT)\..\pack\Keil\STM32F1xx_DFP\2.3.0\Device\StdPeriph_Driver\inc\stm32f10x_gpio.h" />
     <ClInclude Include="$(TOOLCHAIN_ROOT)\..\pack\Keil\STM32F1xx_DFP\2.3.0\Device\StdPeriph_Driver\inc\stm32f10x_rcc.h" />
     <ClInclude Include="..\..\kernel\source\include\tLib.h" />
+    <ClCompile Include="..\..\usr_app\usr_app.c" />
+    <ClCompile Include="..\..\kernel\source\tTask.c" />
+    <ClCompile Include="..\..\kernel\source\tTime.c" />
+    <ClCompile Include="..\..\kernel\source\tCpu.c" />
   </ItemGroup>
 </Project>

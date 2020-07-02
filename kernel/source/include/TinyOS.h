@@ -14,6 +14,8 @@ typedef uint32_t tTaskStack;
 
 #define TINYOS_SLICE_MAX                10
 
+#define TASK_IDLE_ENV_SIZE  32
+
 typedef struct {
     tTaskStack *stack;
     uint32_t wDelayTicks;   // 任务延时计数器
@@ -25,19 +27,43 @@ typedef struct {
     tNode linkNode;
     uint32_t slice; // 时间片
 
+    //uint32_t suspendC;
+
 } tTask;
 
 extern tTask *currentTask;
 extern tTask *nextTask;
 
+extern void tTaskInit(tTask *task, void(*entry)(void *), void *param, uint32_t prio, tTaskStack *stack);
+
 extern void tTaskSwitch(void);
+
 extern void tTaskRunFirst(void);
 
 extern uint32_t tTaskEnterCritical(void);
+
 extern void tTaskExitCritical(uint32_t status);
 
 extern void tTaskSchedInit(void);
+
+extern void tTaskSched(void);
+
 extern void tTaskSchedDisable(void);
+
 extern void tTaskSchedEnable(void);
+
+extern void tTaskScedRdy(tTask *task);
+
+extern void tTaskScedUnRdy(tTask *task);
+
+extern void tTaskDelay(uint32_t wTicks);
+
+extern void tTaskSystemTickHandler(void);
+
+extern void tTimeTaskWait(tTask *task, uint32_t ticks);
+
+extern void tTimeTaskWakeUp(tTask *task);
+
+extern void tInitApp(void);
 
 #endif

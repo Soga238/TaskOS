@@ -144,6 +144,18 @@
     <ClInclude Include="..\..\kernel\source\include\tLib.h">
       <Filter>Header files\kernel</Filter>
     </ClInclude>
+    <ClCompile Include="..\..\usr_app\usr_app.c">
+      <Filter>Source files\usr_app</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\kernel\source\tTask.c">
+      <Filter>Source files\kernel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\kernel\source\tTime.c">
+      <Filter>Source files\kernel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\kernel\source\tCpu.c">
+      <Filter>Source files\kernel</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\kernel\source\include\tk_compiler.h">
