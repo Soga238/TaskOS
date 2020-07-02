@@ -64,6 +64,17 @@ extern void tTaskScedUnRdy(tTask *task);
 
 extern void tTaskDelay(uint32_t wTicks);
 
+typedef struct {
+    uint32_t delayTicks;
+    uint32_t prio;
+    uint32_t state;
+    uint32_t slice;
+    uint32_t suspendCount;
+}tTaskInfo;
+
+void tTaskGetInfo(tTask* task, tTaskInfo* info);
+
+
 extern void tTaskSuspend(tTask *task);
 
 extern void tTaskWakeUp(tTask *task);

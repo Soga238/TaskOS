@@ -37,7 +37,12 @@ void task1Entry(void *argument)
     // 设备任务释放回调函数
     tTaskSetCleanCallFunc(currentTask, task1DestroyFunc, NULL);
 
+    tTaskInfo info;
+
     while (1) {
+
+        tTaskGetInfo(currentTask, &info);
+
         taskFlag1 = 1;
         tTaskDelay(1);
         taskFlag1 = 0;
@@ -51,7 +56,12 @@ void task2Entry(void *argument)
 {
     int task1Deleted = 0;
 
+    tTaskInfo info;
+
     while (1) {
+
+        tTaskGetInfo(currentTask, &info);
+        
         taskFlag2 = 1;
         tTaskDelay(1);
         taskFlag2 = 0;
@@ -66,7 +76,12 @@ void task2Entry(void *argument)
 
 void task3Entry(void *argument)
 {
+    tTaskInfo info;
+
     while (1) {
+
+        tTaskGetInfo(currentTask, &info);
+        
         if (tTaskIsRequestDeleted()) {
             taskFlag3 = 0;
             tTaskDeleteSelf();
@@ -82,8 +97,12 @@ void task3Entry(void *argument)
 void task4Entry(void *argument)
 {
     int task3Deleted = 0;
+    tTaskInfo info;
 
     while (1) {
+
+        tTaskGetInfo(currentTask, &info);
+        
         taskFlag4 = 1;
         tTaskDelay(1);
         taskFlag4 = 0;
