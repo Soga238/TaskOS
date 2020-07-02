@@ -123,6 +123,19 @@ void tTaskSchedEnable(void)
     tTaskExitCritical(status);
 }
 
+void tTimeTaskRemove(tTask *task)
+{
+    // 从延时链表移除任务
+    tListRemove(&tTaskDelayedList, &task->delayNode);
+}
+
+void tTaskSchedRemove(tTask* task)
+{
+    tListRemove(&taskTable[task->prio], &task->linkNode);// 从优先级链表删除
+    if (tListCount(&taskTable[task->prio]) == 0) {
+        tBitmapClear(&taskPrioBitmap, task->prio);  // 该优先级没有任务了，才能把该优先级标志位清0
+    }
+}
 
 void taskIdle(void *argument)
 {

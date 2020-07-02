@@ -28,18 +28,24 @@ void tTaskInit(tTask *task, void(*entry)(void *), void *param, uint32_t prio, tT
 
     task->slice = TINYOS_SLICE_MAX;
     tNodeInit(&task->linkNode);
-    
+
+    task->suspendCount = 0;
+
+    task->clean = NULL;
+    task->cleanParam = NULL;
+    task->requestDeleteFlag = 0;
+
     tTaskScedRdy(task);
 }
 
 // 挂起任务，将优先级任务链表中删除
-void tTaskSuspend(tTask* task)
+void tTaskSuspend(tTask *task)
 {
     uint32_t status = tTaskEnterCritical();
 
     // 延时状态的任务不能被挂起
     if (!(task->state & TINYOS_TASK_STATE_SUSPEND)) {
-        
+
         // 可能已经处于挂起状态了
         if (++task->suspendCount <= 1) {
             tTaskScedUnRdy(task);
@@ -74,3 +80,68 @@ void tTaskWakeUp(tTask *task)
 
     tTaskExitCritical(status);
 }
+
+void tTaskSetCleanCallFunc(tTask *task, void(*clean)(void *param), void *param)
+{
+    task->clean = clean;
+    task->cleanParam = param;
+}
+
+void tTaskForceDelete(tTask *task)
+{
+    uint32_t status = tTaskEnterCritical();
+
+    // 被删除的任务处于延时状态
+    if (task->state & TINYOS_TASK_STATE_DELAYED) {
+        tTimeTaskRemove(task);
+    } else if (!(task->state & TINYOS_TASK_STATE_SUSPEND)) {
+        tTaskSchedRemove(task);
+    }
+
+    if (task->clean) {
+        task->clean(task->cleanParam);
+    }
+
+    if (currentTask == task) {
+        tTaskSched();   // 删除自己后，立即调度任务
+    }
+
+    tTaskExitCritical(status);
+}
+
+void tTaskRequestDelete(tTask *task)
+{
+    uint32_t status = tTaskEnterCritical();
+
+    task->requestDeleteFlag = 1;
+
+    tTaskExitCritical(status);
+}
+
+uint8_t tTaskIsRequestDeleted(void)
+{
+    uint32_t status = tTaskEnterCritical();
+    
+    uint8_t flag = currentTask->requestDeleteFlag;
+
+    tTaskExitCritical(status);
+
+    return flag;
+}
+
+void tTaskDeleteSelf(void)
+{
+    uint32_t status = tTaskEnterCritical();
+
+    tTaskSchedRemove(currentTask);
+
+    if (currentTask->clean) {
+        currentTask->clean(currentTask->cleanParam);
+    }
+
+    tTaskSched();   // 删除自己后，立即调度任务
+
+    tTaskExitCritical(status);
+}
+
+

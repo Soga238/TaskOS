@@ -1,7 +1,11 @@
-#ifndef TK_COMPILER_H
-#define TK_COMPILER_H
+#ifndef TK_TYPES_H
+#define TK_TYPES_H
 
 #include <stdint.h>
-#include <stdlib.h>
+#include <stdbool.h>
 
-#endif // !TK_COMPILER_H
+#ifndef NULL
+#define NULL    ((void *)0)
+#endif // !NULL
+
+#endif // !TK_TYPES_H

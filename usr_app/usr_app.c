@@ -6,28 +6,42 @@
 tTask tTask1;
 tTask tTask2;
 tTask tTask3;
+tTask tTask4;
 
 int32_t taskFlag1;
 int32_t taskFlag2;
 int32_t taskFlag3;
+int32_t taskFlag4;
 
 #define TASK1_ENV_SIZE   32
 #define TASK2_ENV_SIZE   32
 #define TASK3_ENV_SIZE   32
+#define TASK4_ENV_SIZE   32
 
 tTaskStack task1Env[TASK1_ENV_SIZE];
 tTaskStack task2Env[TASK2_ENV_SIZE];
 tTaskStack task3Env[TASK3_ENV_SIZE];
+tTaskStack task4Env[TASK4_ENV_SIZE];
+
+
+void task1DestroyFunc(void* param)
+{
+    taskFlag1 = 0;
+}
+
 
 void task1Entry(void *argument)
 {
     systick_init_1ms();
 
+    // 设备任务释放回调函数
+    tTaskSetCleanCallFunc(currentTask, task1DestroyFunc, NULL);
+
     while (1) {
         taskFlag1 = 1;
-        tTaskSuspend(currentTask);
+        tTaskDelay(1);
         taskFlag1 = 0;
-        tTaskSuspend(currentTask);
+        tTaskDelay(1);
     }
 }
 
@@ -35,19 +49,29 @@ void task1Entry(void *argument)
 
 void task2Entry(void *argument)
 {
+    int task1Deleted = 0;
+
     while (1) {
         taskFlag2 = 1;
         tTaskDelay(1);
-        tTaskWakeUp(&tTask1);
         taskFlag2 = 0;
         tTaskDelay(1);
-        tTaskWakeUp(&tTask1);
+
+        if (!task1Deleted) {
+            tTaskForceDelete(&tTask1);
+            task1Deleted = 1;
+        }
     }
 }
 
 void task3Entry(void *argument)
 {
     while (1) {
+        if (tTaskIsRequestDeleted()) {
+            taskFlag3 = 0;
+            tTaskDeleteSelf();
+        }
+
         taskFlag3 = 1;
         tTaskDelay(1);
         taskFlag3 = 0;
@@ -55,15 +79,35 @@ void task3Entry(void *argument)
     }
 }
 
+void task4Entry(void *argument)
+{
+    int task3Deleted = 0;
+
+    while (1) {
+        taskFlag4 = 1;
+        tTaskDelay(1);
+        taskFlag4 = 0;
+        tTaskDelay(1);
+
+        if (!task3Deleted) {
+            tTaskRequestDelete(&tTask3);
+            task3Deleted = 1;
+        }
+
+    }
+}
+
 void tInitApp(void)
 {
-    
+
     memset(task1Env, 0xFF, sizeof(task1Env));
     memset(task2Env, 0xFF, sizeof(task2Env));
     memset(task3Env, 0xFF, sizeof(task3Env));
-    
+
     tTaskInit(&tTask1, task1Entry, (void *)0x11111111, 0, &task1Env[TASK1_ENV_SIZE]);
     tTaskInit(&tTask2, task2Entry, (void *)0x22222222, 1, &task2Env[TASK2_ENV_SIZE]);
-    tTaskInit(&tTask3, task3Entry, (void *)0x33333333, 1, &task3Env[TASK3_ENV_SIZE]);
+    tTaskInit(&tTask3, task3Entry, (void *)0x33333333, 0, &task3Env[TASK3_ENV_SIZE]);
+    tTaskInit(&tTask4, task4Entry, (void *)0x44444444, 1, &task4Env[TASK4_ENV_SIZE]);
+
 }
 

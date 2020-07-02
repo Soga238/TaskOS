@@ -11,7 +11,8 @@ typedef uint32_t tTaskStack;
 
 #define TINYOS_TASK_STATE_RDY           0
 #define TINYOS_TASK_STATE_DELAYED       (1u << 1)
-#define TINYOS_TASK_STATE_SUSPEND       (1u << 2)
+#define TINYOS_TASK_STATE_DELETED       (1u << 2)
+#define TINYOS_TASK_STATE_SUSPEND       (1u << 3)
 
 #define TINYOS_SLICE_MAX                10
 
@@ -29,6 +30,10 @@ typedef struct {
     uint32_t slice;         // 时间片
 
     uint32_t suspendCount;
+
+    void (*clean)(void *param);
+    void *cleanParam;
+    uint8_t requestDeleteFlag;
 
 } tTask;
 
@@ -59,15 +64,29 @@ extern void tTaskScedUnRdy(tTask *task);
 
 extern void tTaskDelay(uint32_t wTicks);
 
-extern void tTaskSuspend(tTask* task);
+extern void tTaskSuspend(tTask *task);
 
-extern void tTaskWakeUp(tTask* task);
+extern void tTaskWakeUp(tTask *task);
 
 extern void tTaskSystemTickHandler(void);
 
 extern void tTimeTaskWait(tTask *task, uint32_t ticks);
 
 extern void tTimeTaskWakeUp(tTask *task);
+
+extern void tTaskSchedRemove(tTask* task);
+
+extern void tTimeTaskRemove(tTask* task);
+
+void tTaskSetCleanCallFunc(tTask* task, void(*clean)(void* param), void* param);
+
+void tTaskForceDelete(tTask* task);
+
+void tTaskRequestDelete(tTask* task);
+
+uint8_t tTaskIsRequestDeleted(void);
+
+void tTaskDeleteSelf(void);
 
 extern void tInitApp(void);
 
