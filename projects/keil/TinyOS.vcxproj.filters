@@ -156,6 +156,9 @@
     <ClCompile Include="..\..\kernel\source\tCpu.c">
       <Filter>Source files\kernel</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\kernel\source\tEvent.c">
+      <Filter>Source files\kernel</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\kernel\source\include\tk_compiler.h">

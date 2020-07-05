@@ -452,6 +452,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\kernel\source\tCpu.c</FilePath>
             </File>
+            <File>
+              <FileName>tEvent.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\kernel\source\tEvent.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

@@ -23,6 +23,8 @@ tTaskStack task2Env[TASK2_ENV_SIZE];
 tTaskStack task3Env[TASK3_ENV_SIZE];
 tTaskStack task4Env[TASK4_ENV_SIZE];
 
+tEvent eventWaitTimeout;
+tEvent eventWaitNormal;
 
 void task1DestroyFunc(void* param)
 {
@@ -37,15 +39,16 @@ void task1Entry(void *argument)
     // 设备任务释放回调函数
     tTaskSetCleanCallFunc(currentTask, task1DestroyFunc, NULL);
 
-    tTaskInfo info;
+    tEventInit(&eventWaitTimeout, EVENT_TYPE_UNKNOWN);
 
     while (1) {
 
-        tTaskGetInfo(currentTask, &info);
+        tEventWait(&eventWaitTimeout, currentTask, NULL, 0, 5);
+        tTaskSched();   // 调度下任务
 
-        taskFlag1 = 1;
-        tTaskDelay(1);
         taskFlag1 = 0;
+        tTaskDelay(1);
+        taskFlag1 = 1;
         tTaskDelay(1);
     }
 }
@@ -54,42 +57,30 @@ void task1Entry(void *argument)
 
 void task2Entry(void *argument)
 {
-    int task1Deleted = 0;
-
-    tTaskInfo info;
-
     while (1) {
+        tEventWait(&eventWaitNormal, currentTask, NULL, 0, 0);
+        tTaskSched();   // 调度下任务
 
-        tTaskGetInfo(currentTask, &info);
-        
-        taskFlag2 = 1;
-        tTaskDelay(1);
         taskFlag2 = 0;
         tTaskDelay(1);
+        taskFlag2 = 1;
+        tTaskDelay(1);
 
-        if (!task1Deleted) {
-            tTaskForceDelete(&tTask1);
-            task1Deleted = 1;
-        }
     }
 }
 
 void task3Entry(void *argument)
 {
-    tTaskInfo info;
+    tEventInit(&eventWaitNormal, EVENT_TYPE_UNKNOWN);
 
     while (1) {
 
-        tTaskGetInfo(currentTask, &info);
-        
-        if (tTaskIsRequestDeleted()) {
-            taskFlag3 = 0;
-            tTaskDeleteSelf();
-        }
+        tEventWait(&eventWaitNormal, currentTask, NULL, 0, 0);
+        tTaskSched();   // 调度下任务
 
-        taskFlag3 = 1;
-        tTaskDelay(1);
         taskFlag3 = 0;
+        tTaskDelay(1);
+        taskFlag3 = 1;
         tTaskDelay(1);
     }
 }
@@ -97,28 +88,22 @@ void task3Entry(void *argument)
 void task4Entry(void *argument)
 {
     int task3Deleted = 0;
-    tTaskInfo info;
 
     while (1) {
 
-        tTaskGetInfo(currentTask, &info);
-        
-        taskFlag4 = 1;
-        tTaskDelay(1);
+        tTask* task = tEventWakeUp(&eventWaitNormal, NULL, 0);
+        tTaskSched();   // 调度下任务
+
         taskFlag4 = 0;
         tTaskDelay(1);
-
-        if (!task3Deleted) {
-            tTaskRequestDelete(&tTask3);
-            task3Deleted = 1;
-        }
+        taskFlag4 = 1;
+        tTaskDelay(1);
 
     }
 }
 
 void tInitApp(void)
 {
-
     memset(task1Env, 0xFF, sizeof(task1Env));
     memset(task2Env, 0xFF, sizeof(task2Env));
     memset(task3Env, 0xFF, sizeof(task3Env));

@@ -129,7 +129,7 @@ void tTimeTaskRemove(tTask *task)
     tListRemove(&tTaskDelayedList, &task->delayNode);
 }
 
-void tTaskSchedRemove(tTask* task)
+void tTaskSchedRemove(tTask *task)
 {
     tListRemove(&taskTable[task->prio], &task->linkNode);// 从优先级链表删除
     if (tListCount(&taskTable[task->prio]) == 0) {
@@ -157,6 +157,9 @@ void tTaskSystemTickHandler(void)
 
         task = tNodeParent(node, tTask, delayNode);
         if (--task->wDelayTicks == 0) {
+            if (task->waitEvent != NULL) {
+                tEventRemoveTask(task, NULL, TIMEOUT);
+            }
             tTimeTaskWakeUp(task);// 将task任务从延时链表删除
             tTaskScedRdy(task);// 插入到就绪任务表中
         }
@@ -184,7 +187,7 @@ int main(void)
     tTaskSchedInit();
 
     tInitApp();
-    
+
     tTaskInit(&tTaskIdle, taskIdle, (void *)0, TINYOS_PRIO_COUNT - 1, &taskIdleEnv[TASK_IDLE_ENV_SIZE]);
 
     nextTask = tTaskHighestReady();
