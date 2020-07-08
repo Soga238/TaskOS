@@ -76,7 +76,7 @@
     <AllDependencies>
       <ProjectDependency>
         <RelativePath>TinyOS.uvprojx</RelativePath>
-        <Timestamp>132381448729923387</Timestamp>
+        <Timestamp>132384314892836414</Timestamp>
       </ProjectDependency>
     </AllDependencies>
     <RootDirectory>
@@ -124,6 +124,9 @@
             </VirtualFileSnapshot>
             <VirtualFileSnapshot>
               <RelativePath>..\..\kernel\source\tCpu.c</RelativePath>
+            </VirtualFileSnapshot>
+            <VirtualFileSnapshot>
+              <RelativePath>..\..\kernel\source\tEvent.c</RelativePath>
             </VirtualFileSnapshot>
           </Files>
         </VirtualDirectorySnapshot>

@@ -13,17 +13,16 @@ int32_t taskFlag2;
 int32_t taskFlag3;
 int32_t taskFlag4;
 
-#define TASK1_ENV_SIZE   32
-#define TASK2_ENV_SIZE   32
-#define TASK3_ENV_SIZE   32
-#define TASK4_ENV_SIZE   32
+#define TASK1_ENV_SIZE   64
+#define TASK2_ENV_SIZE   64
+#define TASK3_ENV_SIZE   64
+#define TASK4_ENV_SIZE   64
 
 tTaskStack task1Env[TASK1_ENV_SIZE];
 tTaskStack task2Env[TASK2_ENV_SIZE];
 tTaskStack task3Env[TASK3_ENV_SIZE];
 tTaskStack task4Env[TASK4_ENV_SIZE];
 
-tEvent eventWaitTimeout;
 tEvent eventWaitNormal;
 
 void task1DestroyFunc(void* param)
@@ -39,12 +38,17 @@ void task1Entry(void *argument)
     // 设备任务释放回调函数
     tTaskSetCleanCallFunc(currentTask, task1DestroyFunc, NULL);
 
-    tEventInit(&eventWaitTimeout, EVENT_TYPE_UNKNOWN);
+    tEventInit(&eventWaitNormal, EVENT_TYPE_UNKNOWN);
 
     while (1) {
 
-        tEventWait(&eventWaitTimeout, currentTask, NULL, 0, 5);
-        tTaskSched();   // 调度下任务
+        uint32_t count = tEventWaitCount(&eventWaitNormal);
+        uint32_t wakeUpCount = tEventRemoveAll(&eventWaitNormal, NULL, 0);
+
+        if (wakeUpCount > 0) {
+            tTaskSched();
+            count = tEventWaitCount(&eventWaitNormal);
+        }
 
         taskFlag1 = 0;
         tTaskDelay(1);
@@ -71,8 +75,6 @@ void task2Entry(void *argument)
 
 void task3Entry(void *argument)
 {
-    tEventInit(&eventWaitNormal, EVENT_TYPE_UNKNOWN);
-
     while (1) {
 
         tEventWait(&eventWaitNormal, currentTask, NULL, 0, 0);
@@ -91,7 +93,7 @@ void task4Entry(void *argument)
 
     while (1) {
 
-        tTask* task = tEventWakeUp(&eventWaitNormal, NULL, 0);
+        tEventWait(&eventWaitNormal, currentTask, NULL, 0, 0);
         tTaskSched();   // 调度下任务
 
         taskFlag4 = 0;
@@ -110,7 +112,7 @@ void tInitApp(void)
 
     tTaskInit(&tTask1, task1Entry, (void *)0x11111111, 0, &task1Env[TASK1_ENV_SIZE]);
     tTaskInit(&tTask2, task2Entry, (void *)0x22222222, 1, &task2Env[TASK2_ENV_SIZE]);
-    tTaskInit(&tTask3, task3Entry, (void *)0x33333333, 0, &task3Env[TASK3_ENV_SIZE]);
+    tTaskInit(&tTask3, task3Entry, (void *)0x33333333, 1, &task3Env[TASK3_ENV_SIZE]);
     tTaskInit(&tTask4, task4Entry, (void *)0x44444444, 1, &task4Env[TASK4_ENV_SIZE]);
 
 }
