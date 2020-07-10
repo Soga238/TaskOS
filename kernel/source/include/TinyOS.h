@@ -23,7 +23,8 @@
 typedef enum {
     NO_ERROR = 0,
     TIMEOUT,
-    RESOURCE_UNAVALIABLE
+    RESOURCE_UNAVALIABLE,
+    DELETE,
 }tError;
 
 extern tTask *currentTask;
