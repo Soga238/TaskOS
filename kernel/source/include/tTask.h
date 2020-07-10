@@ -2,6 +2,7 @@
 #define TTASK_H
 
 #include ".\tk_types.h"
+#include ".\tLib.h"
 
 typedef uint32_t tTaskStack;
 typedef struct _tEvent tEvent;

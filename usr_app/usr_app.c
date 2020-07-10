@@ -23,7 +23,8 @@ tTaskStack task2Env[TASK2_ENV_SIZE];
 tTaskStack task3Env[TASK3_ENV_SIZE];
 tTaskStack task4Env[TASK4_ENV_SIZE];
 
-tEvent eventWaitNormal;
+tSem sem1;
+tSem sem2;
 
 void task1DestroyFunc(void* param)
 {
@@ -38,17 +39,11 @@ void task1Entry(void *argument)
     // 设备任务释放回调函数
     tTaskSetCleanCallFunc(currentTask, task1DestroyFunc, NULL);
 
-    tEventInit(&eventWaitNormal, EVENT_TYPE_UNKNOWN);
+    tSemInit(&sem1, 0, 10);
 
     while (1) {
 
-        uint32_t count = tEventWaitCount(&eventWaitNormal);
-        uint32_t wakeUpCount = tEventRemoveAll(&eventWaitNormal, NULL, 0);
-
-        if (wakeUpCount > 0) {
-            tTaskSched();
-            count = tEventWaitCount(&eventWaitNormal);
-        }
+        tSemWait(&sem1, 10);
 
         taskFlag1 = 0;
         tTaskDelay(1);
@@ -61,25 +56,28 @@ void task1Entry(void *argument)
 
 void task2Entry(void *argument)
 {
+    volatile int error = 0;
+
     while (1) {
-        tEventWait(&eventWaitNormal, currentTask, NULL, 0, 0);
-        tTaskSched();   // 调度下任务
 
         taskFlag2 = 0;
         tTaskDelay(1);
         taskFlag2 = 1;
         tTaskDelay(1);
 
+        tSemNotify(&sem1);
+        error = tSemNoWaitGet(&sem1);
+        error = tSemNoWaitGet(&sem1);
+
     }
 }
 
 void task3Entry(void *argument)
 {
+     tSemInit(&sem2, 0, 10);
     while (1) {
-
-        tEventWait(&eventWaitNormal, currentTask, NULL, 0, 0);
-        tTaskSched();   // 调度下任务
-
+        tSemWait(&sem2, 10);    // 等待超时运行
+        
         taskFlag3 = 0;
         tTaskDelay(1);
         taskFlag3 = 1;
@@ -89,18 +87,12 @@ void task3Entry(void *argument)
 
 void task4Entry(void *argument)
 {
-    int task3Deleted = 0;
-
     while (1) {
-
-        tEventWait(&eventWaitNormal, currentTask, NULL, 0, 0);
-        tTaskSched();   // 调度下任务
-
+        
         taskFlag4 = 0;
         tTaskDelay(1);
         taskFlag4 = 1;
         tTaskDelay(1);
-
     }
 }
 

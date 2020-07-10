@@ -7,6 +7,7 @@
 #include ".\tLib.h"
 #include ".\tEvent.h"
 #include ".\tTask.h"
+#include ".\tSem.h"
 
 #define TINYOS_TASK_STATE_RDY           0
 #define TINYOS_TASK_STATE_DELAYED       (1u << 1)
@@ -21,7 +22,8 @@
 
 typedef enum {
     NO_ERROR = 0,
-    TIMEOUT
+    TIMEOUT,
+    RESOURCE_UNAVALIABLE
 }tError;
 
 extern tTask *currentTask;
