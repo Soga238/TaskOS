@@ -15,6 +15,12 @@ typedef struct {
     void **msgBuffer;   // 消息缓冲区头指针
 } tMBox;
 
+typedef struct {
+    uint32_t count;     // 消息数
+    uint32_t maxCount;
+    uint32_t taskCount;
+} tMBoxInfo;
+
 
 void tMBoxInit(tMBox *box, void **msgBuffer, uint32_t maxCount);
 uint32_t tMboxWait(tMBox *box, void **msg, uint32_t waitTicks);
@@ -22,5 +28,6 @@ uint32_t tMboxNoWaitGet(tMBox *box, void **msg);
 uint32_t tMboxNotify(tMBox *box, void *msg, uint32_t notifyOption);
 void tMboxFlush(tMBox *mbox);
 uint32_t tMboxDestroy(tMBox *mbox);
+void tMboxInfoGet(tMBox *mbox, tMBoxInfo *info);
 
 #endif
