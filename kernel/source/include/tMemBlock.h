@@ -20,6 +20,9 @@ typedef struct {
 
 
 void tMemBlockInit(tMemBlock* memBlock, uint8_t* memStart, uint32_t blockSize, uint32_t blockCnt);
+uint32_t tMemBlockWait(tMemBlock* memBlock, void** mem, uint32_t waitTicks);
+uint32_t tMemBlockNoWaitGet(tMemBlock* memBlock, void** mem);
+void tMemBlockNotify(tMemBlock* memBlock, void* mem);
 
 
 #endif // !TMEMBLOCK_H

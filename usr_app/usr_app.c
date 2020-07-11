@@ -13,19 +13,19 @@ int32_t taskFlag2;
 int32_t taskFlag3;
 int32_t taskFlag4;
 
-#define TASK1_ENV_SIZE   64
-#define TASK2_ENV_SIZE   64
-#define TASK3_ENV_SIZE   64
-#define TASK4_ENV_SIZE   64
+#define TASK1_ENV_SIZE   256
+#define TASK2_ENV_SIZE   256
+#define TASK3_ENV_SIZE   256
+#define TASK4_ENV_SIZE   256
 
 tTaskStack task1Env[TASK1_ENV_SIZE];
 tTaskStack task2Env[TASK2_ENV_SIZE];
 tTaskStack task3Env[TASK3_ENV_SIZE];
 tTaskStack task4Env[TASK4_ENV_SIZE];
 
+typedef uint8_t(*tBlock)[100];
 uint8_t mem1[20][100];
 tMemBlock memBlock1;
-
 
 void task1DestroyFunc(void* param)
 {
@@ -37,7 +37,21 @@ void task1Entry(void *argument)
 {
     systick_init_1ms();
 
+    tBlock block[20];
+
     tMemBlockInit(&memBlock1, (uint8_t *)mem1, 100, 20);
+
+    for (int32_t i = 0; i < 20; i++) {
+        tMemBlockWait(&memBlock1, &block[i], 0);
+    }
+
+    // tTaskDelay(1);
+
+    for (int32_t i = 0; i < 20; i++) {
+        memset(block[i], i, 100);
+        tMemBlockNotify(&memBlock1, block[i]);
+        // tTaskDelay(2);
+    }
 
     while (1) {
 
@@ -52,9 +66,14 @@ void task1Entry(void *argument)
 
 void task2Entry(void *argument)
 {
+    void *ptr = 0;
+    
     while (1) {
         taskFlag2 = 0;
         tTaskDelay(1);
+        
+        tMemBlockWait(&memBlock1, &ptr, 10);
+        
         taskFlag2 = 1;
         tTaskDelay(1);
     }
