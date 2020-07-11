@@ -23,13 +23,9 @@ tTaskStack task2Env[TASK2_ENV_SIZE];
 tTaskStack task3Env[TASK3_ENV_SIZE];
 tTaskStack task4Env[TASK4_ENV_SIZE];
 
+uint8_t mem1[20][100];
+tMemBlock memBlock1;
 
-tMBox mbox1;
-tMBox mbox2;
-void* mbox1Buffer[20];
-void* mbox2Buffer[20];
-
-uint32_t g_msg[20];
 
 void task1DestroyFunc(void* param)
 {
@@ -41,23 +37,9 @@ void task1Entry(void *argument)
 {
     systick_init_1ms();
 
-    tMBoxInit(&mbox1, mbox1Buffer, 20);
+    tMemBlockInit(&memBlock1, (uint8_t *)mem1, 100, 20);
 
     while (1) {
-
-        for (int32_t i = 0; i < 20; i++) {
-            g_msg[i] = i;
-            tMboxNotify(&mbox1, &g_msg[i], MBOX_SEND_NORMAL);
-        }
-
-        tTaskDelay(100);
-
-        for (int32_t i = 0; i < 20; i++) {
-            g_msg[i] = i;
-            tMboxNotify(&mbox1, &g_msg[i], MBOX_SEND_FRONT);
-        }
-        
-        tTaskDelay(100);
 
         taskFlag1 = 0;
         tTaskDelay(1);
@@ -71,24 +53,16 @@ void task1Entry(void *argument)
 void task2Entry(void *argument)
 {
     while (1) {
-
-        void* msg;
-        uint32_t err = tMboxWait(&mbox1, &msg, 0);
-        if (err == NO_ERROR) {
-            volatile uint32_t value = *(uint32_t*)msg;
-            taskFlag2 = value;
-            tTaskDelay(1);
-        }
+        taskFlag2 = 0;
+        tTaskDelay(1);
+        taskFlag2 = 1;
+        tTaskDelay(1);
     }
 }
 
 void task3Entry(void *argument)
 {
-    tMBoxInit(&mbox2, mbox2Buffer, 20);
     while (1) {
-
-        void* msg;
-        uint32_t err = tMboxWait(&mbox2, &msg, 100);
 
         taskFlag3 = 0;
         tTaskDelay(1);

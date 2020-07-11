@@ -9,6 +9,7 @@
 #include ".\tTask.h"
 #include ".\tSem.h"
 #include ".\tMbox.h"
+#include ".\tMemBlock.h"
 
 #define TINYOS_TASK_STATE_RDY           0
 #define TINYOS_TASK_STATE_DELAYED       (1u << 1)

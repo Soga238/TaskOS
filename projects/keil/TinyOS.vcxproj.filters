@@ -165,6 +165,9 @@
     <ClCompile Include="..\..\kernel\source\tMbox.c">
       <Filter>Source files\kernel</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\kernel\source\tMemBlock.c">
+      <Filter>Source files\kernel</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\kernel\source\include\tk_compiler.h">
