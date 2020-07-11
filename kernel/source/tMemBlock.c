@@ -82,3 +82,30 @@ void tMemBlockNotify(tMemBlock* memBlock, void* mem)
 
     tTaskExitCritical(status);
 }
+
+uint32_t tMemBlockDestroy(tMemBlock* memBlock)
+{
+    uint32_t status = tTaskEnterCritical();
+    uint32_t count = tEventRemoveAll(&memBlock->event, NULL, DELETE);
+
+    tTaskExitCritical(status);
+
+    if (count > 0) {
+        tTaskSched();
+    }
+
+    return count;
+}
+
+
+void tMemBlockGetInfo(tMemBlock* memBlock, tMemBlockInfo *info)
+{
+    uint32_t status = tTaskEnterCritical();
+
+    info->count = tListCount(&memBlock->blockList); // 空闲存储块
+    info->maxCount = memBlock->maxCount;
+    info->taskCount = tEventWaitCount(&memBlock->event);    // 等待内存块的任务链表
+    info->blockSize = memBlock->blockSize;
+
+    tTaskExitCritical(status);
+}
