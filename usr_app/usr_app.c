@@ -23,8 +23,13 @@ tTaskStack task2Env[TASK2_ENV_SIZE];
 tTaskStack task3Env[TASK3_ENV_SIZE];
 tTaskStack task4Env[TASK4_ENV_SIZE];
 
-tSem sem1;
-tSem sem2;
+
+tMBox mbox1;
+tMBox mbox2;
+void* mbox1Buffer[20];
+void* mbox2Buffer[20];
+
+uint32_t g_msg[20];
 
 void task1DestroyFunc(void* param)
 {
@@ -36,14 +41,23 @@ void task1Entry(void *argument)
 {
     systick_init_1ms();
 
-    // 设备任务释放回调函数
-    tTaskSetCleanCallFunc(currentTask, task1DestroyFunc, NULL);
-
-    tSemInit(&sem1, 0, 10);
+    tMBoxInit(&mbox1, mbox1Buffer, 20);
 
     while (1) {
 
-        tSemWait(&sem1, 10);
+        for (int32_t i = 0; i < 20; i++) {
+            g_msg[i] = i;
+            tMboxNotify(&mbox1, &g_msg[i], MBOX_SEND_NORMAL);
+        }
+
+        tTaskDelay(100);
+
+        for (int32_t i = 0; i < 20; i++) {
+            g_msg[i] = i;
+            tMboxNotify(&mbox1, &g_msg[i], MBOX_SEND_FRONT);
+        }
+        
+        tTaskDelay(100);
 
         taskFlag1 = 0;
         tTaskDelay(1);
@@ -56,28 +70,26 @@ void task1Entry(void *argument)
 
 void task2Entry(void *argument)
 {
-    volatile int error = 0;
-
     while (1) {
 
-        taskFlag2 = 0;
-        tTaskDelay(1);
-        taskFlag2 = 1;
-        tTaskDelay(1);
-
-        tSemNotify(&sem1);
-        error = tSemNoWaitGet(&sem1);
-        error = tSemNoWaitGet(&sem1);
-
+        void* msg;
+        uint32_t err = tMboxWait(&mbox1, &msg, 0);
+        if (err == NO_ERROR) {
+            volatile uint32_t value = *(uint32_t*)msg;
+            taskFlag2 = value;
+            tTaskDelay(1);
+        }
     }
 }
 
 void task3Entry(void *argument)
 {
-     tSemInit(&sem2, 0, 10);
+    tMBoxInit(&mbox2, mbox2Buffer, 20);
     while (1) {
-        tSemWait(&sem2, 10);    // 等待超时运行
-        
+
+        void* msg;
+        uint32_t err = tMboxWait(&mbox2, &msg, 100);
+
         taskFlag3 = 0;
         tTaskDelay(1);
         taskFlag3 = 1;

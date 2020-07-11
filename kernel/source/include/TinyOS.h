@@ -8,6 +8,7 @@
 #include ".\tEvent.h"
 #include ".\tTask.h"
 #include ".\tSem.h"
+#include ".\tMbox.h"
 
 #define TINYOS_TASK_STATE_RDY           0
 #define TINYOS_TASK_STATE_DELAYED       (1u << 1)
@@ -24,8 +25,9 @@ typedef enum {
     NO_ERROR = 0,
     TIMEOUT,
     RESOURCE_UNAVALIABLE,
+    RESOURCE_FULL,
     DELETE,
-}tError;
+} tError;
 
 extern tTask *currentTask;
 extern tTask *nextTask;
@@ -58,9 +60,9 @@ extern void tTimeTaskWait(tTask *task, uint32_t ticks);
 
 extern void tTimeTaskWakeUp(tTask *task);
 
-extern void tTaskSchedRemove(tTask* task);
+extern void tTaskSchedRemove(tTask *task);
 
-extern void tTimeTaskRemove(tTask* task);
+extern void tTimeTaskRemove(tTask *task);
 
 extern void tInitApp(void);
 

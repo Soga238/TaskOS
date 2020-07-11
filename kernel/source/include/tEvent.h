@@ -6,6 +6,7 @@
 typedef enum {
     EVENT_TYPE_UNKNOWN,
     EVENT_TYPE_SEM,
+    EVENT_TYPE_MAILBOX,
 }tEventType;
 
 typedef struct _tEvent {
