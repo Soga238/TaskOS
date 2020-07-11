@@ -97,6 +97,33 @@ uint32_t tMboxNotify(tMBox *box, void *msg, uint32_t notifyOption)
 
     tTaskExitCritical(status);
     return NO_ERROR;
-    
+
 }
+
+void tMboxFlush(tMBox *mbox)
+{
+    uint32_t status = tTaskEnterCritical();
+
+    if (tEventWaitCount(&mbox->event) == 0) {   // 没有任务
+        mbox->read = 0;
+        mbox->write = 0;
+        mbox->count = 0;
+    }
+
+    tTaskExitCritical(status);
+}
+
+uint32_t tMboxDestroy(tMBox *mbox)
+{
+    uint32_t status = tTaskEnterCritical();
+    uint32_t count = tEventRemoveAll(&mbox->event, NULL, DELETE);
+
+    if (count > 0) {
+        tTaskSched();
+    }
+
+    tTaskExitCritical(status);
+    return count;
+}
+
 

@@ -12,13 +12,15 @@ typedef struct {
     uint32_t read;      // 读索引
     uint32_t write;     // 写索引
     uint32_t maxCount;
-    void** msgBuffer;   // 消息缓冲区头指针
-}tMBox;
+    void **msgBuffer;   // 消息缓冲区头指针
+} tMBox;
 
 
-void tMBoxInit(tMBox* box, void **msgBuffer, uint32_t maxCount);
-uint32_t tMboxWait(tMBox* box, void** msg, uint32_t waitTicks);
-uint32_t tMboxNoWaitGet(tMBox* box, void** msg);
-uint32_t tMboxNotify(tMBox* box, void* msg, uint32_t notifyOption);
+void tMBoxInit(tMBox *box, void **msgBuffer, uint32_t maxCount);
+uint32_t tMboxWait(tMBox *box, void **msg, uint32_t waitTicks);
+uint32_t tMboxNoWaitGet(tMBox *box, void **msg);
+uint32_t tMboxNotify(tMBox *box, void *msg, uint32_t notifyOption);
+void tMboxFlush(tMBox *mbox);
+uint32_t tMboxDestroy(tMBox *mbox);
 
 #endif
