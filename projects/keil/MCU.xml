@@ -76,7 +76,7 @@
     <AllDependencies>
       <ProjectDependency>
         <RelativePath>TinyOS.uvprojx</RelativePath>
-        <Timestamp>132388466626865312</Timestamp>
+        <Timestamp>132389312886131639</Timestamp>
       </ProjectDependency>
     </AllDependencies>
     <RootDirectory>
@@ -133,6 +133,9 @@
             </VirtualFileSnapshot>
             <VirtualFileSnapshot>
               <RelativePath>..\..\kernel\source\tMbox.c</RelativePath>
+            </VirtualFileSnapshot>
+            <VirtualFileSnapshot>
+              <RelativePath>..\..\kernel\source\tMemBlock.c</RelativePath>
             </VirtualFileSnapshot>
           </Files>
         </VirtualDirectorySnapshot>

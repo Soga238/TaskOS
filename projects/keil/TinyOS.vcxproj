@@ -86,6 +86,7 @@
     <ClCompile Include="..\..\kernel\source\switch.c" />
     <ClCompile Include="..\..\kernel\source\tBitmap.c" />
     <ClCompile Include="..\..\kernel\source\tEvent.c" />
+    <ClCompile Include="..\..\kernel\source\tFlagGroup.c" />
     <ClCompile Include="..\..\kernel\source\tList.c" />
     <ClCompile Include="..\..\kernel\source\tMbox.c" />
     <ClCompile Include="..\..\kernel\source\tMemBlock.c" />
