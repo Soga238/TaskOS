@@ -9,7 +9,7 @@ void tEventInit(tEvent *event, tEventType type)
 void tEventWait(tEvent *event, tTask *task, void *msg, uint32_t state, uint32_t timeout)
 {
     uint32_t status = tTaskEnterCritical();
-    
+
     task->state |= state;
     task->waitEvent = event;
     task->eventMsg = msg;
@@ -24,15 +24,15 @@ void tEventWait(tEvent *event, tTask *task, void *msg, uint32_t state, uint32_t 
     if (timeout) {
         tTimeTaskWait(task, timeout);   // 插入到延时链表中，指定时间内没有接收到事件，就触发超时
     }
-    
+
     tTaskExitCritical(status);
 }
 
-tTask* tEventWakeUp(tEvent* event, void* msg, uint32_t result)
+tTask *tEventWakeUp(tEvent *event, void *msg, uint32_t result)
 {
     uint32_t status = tTaskEnterCritical();
-    tNode* node;
-    tTask* task;
+    tNode *node;
+    tTask *task;
 
     node = tListRemoveFirst(&event->waitList);  // 取出事件链表中的第一个等待任务
     if (node != NULL) {
@@ -54,13 +54,36 @@ tTask* tEventWakeUp(tEvent* event, void* msg, uint32_t result)
     return task;
 }
 
-void tEventRemoveTask(tTask* task, void* msg, uint32_t result)
+tTask *tEventWakeUpTask(tEvent *event, tTask *task, void *msg, uint32_t result)
+{
+    uint32_t status = tTaskEnterCritical();
+
+    tListRemove(&event->waitList, &task->linkNode);
+
+    task->waitEvent = NULL;
+    task->waitEventResult = result;
+    task->eventMsg = msg;
+    task->state &= ~TINYOS_WAIT_MASK;
+
+    if (task->wDelayTicks != 0) {
+        tTimeTaskWakeUp(task);  // 从延时任务链表删除
+    }
+
+    tTaskScedRdy(task); // 挂起任务插回优先级任务就绪链表
+
+    tTaskExitCritical(status);
+
+    return task;
+}
+
+
+void tEventRemoveTask(tTask *task, void *msg, uint32_t result)
 {
     uint32_t status = tTaskEnterCritical();
 
     tListRemove(&task->waitEvent->waitList, &task->linkNode);
     task->waitEvent = NULL;
-    
+
     task->waitEventResult = result;
     task->eventMsg = msg;
     task->state &= ~TINYOS_WAIT_MASK;
@@ -71,13 +94,13 @@ void tEventRemoveTask(tTask* task, void* msg, uint32_t result)
 uint32_t tEventRemoveAll(tEvent *event, void *msg, uint32_t result)
 {
     uint32_t status = tTaskEnterCritical();
-    tNode* node;
+    tNode *node;
 
     uint32_t count = tListCount(&event->waitList);
 
     while ((node = tListRemoveFirst(&event->waitList)) != NULL) {
 
-        tTask* task = tNodeParent(node, tTask, linkNode);
+        tTask *task = tNodeParent(node, tTask, linkNode);
         task->waitEvent = NULL;
 
         task->waitEventResult = result;

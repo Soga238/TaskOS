@@ -23,10 +23,10 @@ tTaskStack task2Env[TASK2_ENV_SIZE];
 tTaskStack task3Env[TASK3_ENV_SIZE];
 tTaskStack task4Env[TASK4_ENV_SIZE];
 
-typedef uint8_t(*tBlock)[100];
-uint8_t mem1[20][100];
-tMemBlock memBlock1;
 
+tFlagGroup flagGroup1;
+uint32_t resultFlag = 0;
+        
 void task1DestroyFunc(void* param)
 {
     taskFlag1 = 0;
@@ -37,21 +37,7 @@ void task1Entry(void *argument)
 {
     systick_init_1ms();
 
-    tBlock block[20];
-
-    tMemBlockInit(&memBlock1, (uint8_t *)mem1, 100, 20);
-
-    for (int32_t i = 0; i < 20; i++) {
-        tMemBlockWait(&memBlock1, &block[i], 0);
-    }
-
-    // tTaskDelay(1);
-
-    for (int32_t i = 0; i < 20; i++) {
-        memset(block[i], i, 100);
-        tMemBlockNotify(&memBlock1, block[i]);
-        // tTaskDelay(2);
-    }
+    tFlagGroupInit(&flagGroup1, 0x000000FF);
 
     while (1) {
 
@@ -59,21 +45,22 @@ void task1Entry(void *argument)
         tTaskDelay(1);
         taskFlag1 = 1;
         tTaskDelay(1);
+
+        tFlagGroupNotify(&flagGroup1, 0, 0x06);
     }
 }
 
 #define DELAY() do{for(int32_t i = 0; i < 0xFF; i++){}}while(0)
 
 void task2Entry(void *argument)
-{
-    void *ptr = 0;
-    
+{    
     while (1) {
+        
+        tFlagGroupWait(&flagGroup1, TFLAGGROUP_CLEAR_ALL | TFLAGGROUP_CONSUME, 0x04, &resultFlag, 10);
+        tFlagGroupNoWaitGet(&flagGroup1, TFLAGGROUP_CLEAR_ALL, 0x03, &resultFlag);
+        
         taskFlag2 = 0;
         tTaskDelay(1);
-        
-        tMemBlockWait(&memBlock1, &ptr, 10);
-        
         taskFlag2 = 1;
         tTaskDelay(1);
     }

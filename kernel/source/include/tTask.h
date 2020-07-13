@@ -28,6 +28,10 @@ typedef struct {
     void* eventMsg;
     uint32_t waitEventResult;
 
+
+    uint32_t waitFlagsType;
+    uint32_t eventFlags;
+
 } tTask;
 
 typedef struct {
