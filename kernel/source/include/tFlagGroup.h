@@ -9,6 +9,12 @@ typedef struct {
     uint32_t flag;
 } tFlagGroup;
 
+typedef struct {
+    uint32_t flags;
+    uint32_t taskCount;
+} tFlagGroupInfo;
+
+
 #define TFLAGGROUP_CLEAR        (0)
 #define TFLAGGROUP_SET          (0x1 << 0)
 #define TFLAGGROUP_ANY          (0)
@@ -40,5 +46,8 @@ uint32_t tFlagGroupNotify(tFlagGroup *group,
                           uint8_t isSet,
                           uint32_t flag
                          );
+
+void tFlagGroupGetInfo(tFlagGroup* group, tFlagGroupInfo* info);
+uint32_t tFlagGroupDestroy(tFlagGroup* group);
 
 #endif

@@ -129,3 +129,26 @@ uint32_t tFlagGroupNotify(tFlagGroup *group,
     tTaskExitCritical(status);
     return 0;
 }
+
+void tFlagGroupGetInfo(tFlagGroup* group, tFlagGroupInfo* info)
+{
+    uint32_t status = tTaskEnterCritical();
+
+    info->flags = group->flag;
+    info->taskCount = tEventWaitCount(&group->event);
+
+    tTaskExitCritical(status);
+}
+
+uint32_t tFlagGroupDestroy(tFlagGroup* group)
+{
+    uint32_t status = tTaskEnterCritical();
+    uint32_t count = tEventRemoveAll(&group->event, NULL, DELETE);
+
+    if (count > 0) {
+        tTaskSched();   // 有任务恢复，尝试调度
+    }
+
+    tTaskExitCritical(status);
+    return 0;
+}
