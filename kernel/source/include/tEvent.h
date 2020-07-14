@@ -9,6 +9,7 @@ typedef enum {
     EVENT_TYPE_MAILBOX,
     EVENT_TYPE_MEM_BLOCK,
     EVENT_TYPE_FLAG_GROUP,
+    EVENT_TYPE_MUTEX,
 }tEventType;
 
 typedef struct _tEvent {

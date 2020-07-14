@@ -90,6 +90,7 @@
     <ClCompile Include="..\..\kernel\source\tList.c" />
     <ClCompile Include="..\..\kernel\source\tMbox.c" />
     <ClCompile Include="..\..\kernel\source\tMemBlock.c" />
+    <ClCompile Include="..\..\kernel\source\tMutex.c" />
     <ClCompile Include="..\..\kernel\source\tSem.c" />
     <ClCompile Include="..\..\usr_app\main.c" />
     <None Include="mcu.props" />
