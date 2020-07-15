@@ -8,6 +8,6 @@ void tTaskDelay(uint32_t wTicks)
     tTaskScedUnRdy(currentTask); // 从就绪任务表中删除当前任务
 
     tTaskSched();
-
+    
     tTaskExitCritical(status);
 }

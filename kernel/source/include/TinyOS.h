@@ -14,9 +14,9 @@
 #include ".\tMutex.h"
 
 #define TINYOS_TASK_STATE_RDY           0
-#define TINYOS_TASK_STATE_DELAYED       (1u << 1)
-#define TINYOS_TASK_STATE_DELETED       (1u << 2)
-#define TINYOS_TASK_STATE_SUSPEND       (1u << 3)
+#define TINYOS_TASK_STATE_DELAYED       (1u << 0)
+#define TINYOS_TASK_STATE_DELETED       (1u << 1)
+#define TINYOS_TASK_STATE_SUSPEND       (1u << 2)
 
 #define TINYOS_WAIT_MASK                (0xFFFF0000)
 

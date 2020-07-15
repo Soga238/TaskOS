@@ -231,6 +231,10 @@ void tListInsertAfter(tList* list, tNode* nodeAfter, tNode* nodeToInsert)
 ***********************************************************************************************************/
 void tListRemove(tList* list, tNode* node)
 {
+    if (list->nodeCount <= 0) {
+        return;
+    }
+    
     node->preNode->nextNode = node->nextNode;
     node->nextNode->preNode = node->preNode;
     list->nodeCount--;

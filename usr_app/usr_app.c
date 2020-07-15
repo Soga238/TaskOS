@@ -49,6 +49,7 @@ void task1Entry(void *argument)
 
         tMutexNotify(&mutex);
         tMutexNotify(&mutex);
+        
     }
 }
 
@@ -67,6 +68,7 @@ void task2Entry(void *argument)
 
         tMutexNotify(&mutex);
         tMutexNotify(&mutex);
+
     }
 }
 
@@ -100,8 +102,8 @@ void tInitApp(void)
 
     tTaskInit(&tTask1, task1Entry, (void *)0x11111111, 0, &task1Env[TASK1_ENV_SIZE]);
     tTaskInit(&tTask2, task2Entry, (void *)0x22222222, 1, &task2Env[TASK2_ENV_SIZE]);
-    tTaskInit(&tTask3, task3Entry, (void *)0x33333333, 1, &task3Env[TASK3_ENV_SIZE]);
-    tTaskInit(&tTask4, task4Entry, (void *)0x44444444, 1, &task4Env[TASK4_ENV_SIZE]);
+    // tTaskInit(&tTask3, task3Entry, (void *)0x33333333, 1, &task3Env[TASK3_ENV_SIZE]);
+    // tTaskInit(&tTask4, task4Entry, (void *)0x44444444, 1, &task4Env[TASK4_ENV_SIZE]);
 
 }
 

@@ -81,9 +81,11 @@ void tTaskSched(void)
     // 不是当前任务才切换
     // NOTE: 视频代码bug，未判断空指针
     tTask *task = tTaskHighestReady();
-    if (NULL != task && task != currentTask) {
-        nextTask = task;
-        tTaskSwitch();
+    if (NULL != task) {
+        if (task != currentTask) {
+            nextTask = task;
+            tTaskSwitch();
+        }
     }
 
     tTaskExitCritical(status);
