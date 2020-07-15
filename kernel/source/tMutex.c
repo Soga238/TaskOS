@@ -112,10 +112,10 @@ uint32_t tMutexNotify(tMutex *mutex)
             currentTask->prio = mutex->ownerOriginalPrio;
         }
     }
-     
+
     // 锁释放完毕后，检查链表中是否有任务在等待锁资源
     if (tEventWaitCount(&mutex->event)) {
-        tTask* task = tEventWakeUp(&mutex->event, 0, NO_ERROR); // 直接唤醒头部任务，不是很合理
+        tTask *task = tEventWakeUp(&mutex->event, 0, NO_ERROR); // 直接唤醒头部任务，不是很合理
 
         mutex->ownerTask = task;
         mutex->ownerOriginalPrio = task->prio;
@@ -132,4 +132,51 @@ uint32_t tMutexNotify(tMutex *mutex)
     return NO_ERROR;
 }
 
+uint32_t tMutexDestroy(tMutex *mutex)
+{
+    uint32_t status = tTaskEnterCritical();
+    uint32_t count;
 
+    if (mutex->lockCount > 0) {
+        if (mutex->ownerOriginalPrio != mutex->ownerTask->prio) {
+
+            if (mutex->ownerTask->state == TINYOS_TASK_STATE_RDY) {
+
+                // 恢复最初的优先级
+                tTaskScedUnRdy(mutex->ownerTask);
+                currentTask->prio = mutex->ownerOriginalPrio;
+                tTaskScedRdy(mutex->ownerTask);
+            } else {
+                currentTask->prio = mutex->ownerOriginalPrio;
+            }
+        }
+
+        count = tEventRemoveAll(&mutex->event, 0, DELETE);
+        if (count > 0) {
+            tTaskSched();
+        }
+    }
+
+    tTaskExitCritical(status);
+    return count;
+}
+
+
+void tMutexGetInfo(tMutex* mutex, tMutexInfo *info)
+{
+    uint32_t status = tTaskEnterCritical();
+
+    info->taskCount = tEventWaitCount(&mutex->event);
+    info->ownerPrio = mutex->ownerOriginalPrio;
+
+    if (mutex->ownerTask != NULL) {
+        info->inheritedPrio = mutex->ownerTask->prio;
+    } else {
+        info->inheritedPrio = TINYOS_PRIO_COUNT;    // 非法值
+    }
+    
+    info->owner = mutex->ownerTask;
+    info->lockedCount = mutex->lockCount;
+
+    tTaskExitCritical(status);
+}
