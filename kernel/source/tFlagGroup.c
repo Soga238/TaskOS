@@ -150,5 +150,5 @@ uint32_t tFlagGroupDestroy(tFlagGroup* group)
     }
 
     tTaskExitCritical(status);
-    return 0;
+    return NO_ERROR;
 }

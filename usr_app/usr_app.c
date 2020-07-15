@@ -23,11 +23,9 @@ tTaskStack task2Env[TASK2_ENV_SIZE];
 tTaskStack task3Env[TASK3_ENV_SIZE];
 tTaskStack task4Env[TASK4_ENV_SIZE];
 
+tMutex mutex;
 
-tFlagGroup flagGroup1;
-uint32_t resultFlag = 0;
-        
-void task1DestroyFunc(void* param)
+void task1DestroyFunc(void *param)
 {
     taskFlag1 = 0;
 }
@@ -37,32 +35,38 @@ void task1Entry(void *argument)
 {
     systick_init_1ms();
 
-    tFlagGroupInit(&flagGroup1, 0x000000FF);
+    tMutexInit(&mutex);
 
     while (1) {
+
+        tMutexWait(&mutex, 0);
+        tMutexWait(&mutex, 0);
 
         taskFlag1 = 0;
         tTaskDelay(1);
         taskFlag1 = 1;
         tTaskDelay(1);
 
-        tFlagGroupNotify(&flagGroup1, 0, 0x06);
+        tMutexNotify(&mutex);
+        tMutexNotify(&mutex);
     }
 }
 
 #define DELAY() do{for(int32_t i = 0; i < 0xFF; i++){}}while(0)
 
 void task2Entry(void *argument)
-{    
+{
     while (1) {
-        
-        tFlagGroupWait(&flagGroup1, TFLAGGROUP_CLEAR_ALL | TFLAGGROUP_CONSUME, 0x04, &resultFlag, 10);
-        tFlagGroupNoWaitGet(&flagGroup1, TFLAGGROUP_CLEAR_ALL, 0x03, &resultFlag);
-        
+        tMutexWait(&mutex, 0);
+        tMutexWait(&mutex, 0);
+
         taskFlag2 = 0;
         tTaskDelay(1);
         taskFlag2 = 1;
         tTaskDelay(1);
+
+        tMutexNotify(&mutex);
+        tMutexNotify(&mutex);
     }
 }
 
@@ -80,7 +84,7 @@ void task3Entry(void *argument)
 void task4Entry(void *argument)
 {
     while (1) {
-        
+
         taskFlag4 = 0;
         tTaskDelay(1);
         taskFlag4 = 1;

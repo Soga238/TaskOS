@@ -76,7 +76,7 @@
     <AllDependencies>
       <ProjectDependency>
         <RelativePath>TinyOS.uvprojx</RelativePath>
-        <Timestamp>132390448041860281</Timestamp>
+        <Timestamp>132391942072096029</Timestamp>
       </ProjectDependency>
     </AllDependencies>
     <RootDirectory>
@@ -139,6 +139,9 @@
             </VirtualFileSnapshot>
             <VirtualFileSnapshot>
               <RelativePath>..\..\kernel\source\tFlagGroup.c</RelativePath>
+            </VirtualFileSnapshot>
+            <VirtualFileSnapshot>
+              <RelativePath>..\..\kernel\source\tMutex.c</RelativePath>
             </VirtualFileSnapshot>
           </Files>
         </VirtualDirectorySnapshot>

@@ -2,7 +2,7 @@
 
 void tEventInit(tEvent *event, tEventType type)
 {
-    event->type = EVENT_TYPE_UNKNOWN;
+    event->type = type;
     tListInit(&event->waitList);
 }
 
@@ -10,7 +10,7 @@ void tEventWait(tEvent *event, tTask *task, void *msg, uint32_t state, uint32_t 
 {
     uint32_t status = tTaskEnterCritical();
 
-    task->state |= state;
+    task->state |= (state << 16);   // event使用state的高16位
     task->waitEvent = event;
     task->eventMsg = msg;
     task->waitEventResult = NO_ERROR;

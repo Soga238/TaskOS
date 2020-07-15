@@ -30,6 +30,7 @@ typedef enum {
     RESOURCE_UNAVALIABLE,
     RESOURCE_FULL,
     DELETE,
+    ERROR_OWNER
 } tError;
 
 extern tTask *currentTask;
