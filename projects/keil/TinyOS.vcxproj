@@ -92,6 +92,7 @@
     <ClCompile Include="..\..\kernel\source\tMemBlock.c" />
     <ClCompile Include="..\..\kernel\source\tMutex.c" />
     <ClCompile Include="..\..\kernel\source\tSem.c" />
+    <ClCompile Include="..\..\kernel\source\tTimer.c" />
     <ClCompile Include="..\..\usr_app\main.c" />
     <None Include="mcu.props" />
     <ClInclude Include="$(BSP_ROOT)\Device\Include\stm32f10x.h" />

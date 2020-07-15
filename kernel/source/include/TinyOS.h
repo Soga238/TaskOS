@@ -12,6 +12,7 @@
 #include ".\tMemBlock.h"
 #include ".\tFlagGroup.h"
 #include ".\tMutex.h"
+#include ".\tTimer.h"
 
 #define TINYOS_TASK_STATE_RDY           0
 #define TINYOS_TASK_STATE_DELAYED       (1u << 0)

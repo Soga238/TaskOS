@@ -31,6 +31,6 @@ uint32_t tMutexNoWaitGet(tMutex* mutex);
 uint32_t tMutexNotify(tMutex* mutex);
 
 uint32_t tMutexDestroy(tMutex *mutex);
-void tMutexGetInfo(tMutex *mutex, tMutexInfo);
+void tMutexGetInfo(tMutex* mutex, tMutexInfo* info);
 
 #endif
