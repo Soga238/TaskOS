@@ -30,7 +30,6 @@ void task1DestroyFunc(void *param)
     taskFlag1 = 0;
 }
 
-
 void task1Entry(void *argument)
 {
     systick_init_1ms();
