@@ -82,10 +82,10 @@ void tTaskSched(void)
     // NOTE: 视频代码bug，未判断空指针
     tTask *task = tTaskHighestReady();
     if (NULL != task) {
-        if (task != currentTask) {
+//        if (task != currentTask) {
             nextTask = task;
             tTaskSwitch();
-        }
+//        }
     }
 
     tTaskExitCritical(status);
@@ -153,9 +153,10 @@ void tTaskSystemTickHandler(void)
     tTask *task;
 
     // 所有的延时任务，从优先级链表删除后，都插入到了延时链表中
+    int32_t i = 0;
     for (node = tTaskDelayedList.headNode.nextNode;
-         node != &(tTaskDelayedList.headNode);
-         node = node->nextNode) {
+         i < tListCount(&tTaskDelayedList);
+         node = node->nextNode, ++i) {
 
         task = tNodeParent(node, tTask, delayNode);
         if (--task->wDelayTicks == 0) {
@@ -190,7 +191,7 @@ int main(void)
 
     tInitApp();
 
-    tTaskInit(&tTaskIdle, taskIdle, (void *)0, TINYOS_PRIO_COUNT - 1, &taskIdleEnv[TASK_IDLE_ENV_SIZE]);
+    tTaskInit(&tTaskIdle, taskIdle, (void *)0, TINYOS_PRIO_COUNT - 1, taskIdleEnv, sizeof(taskIdleEnv));
 
     nextTask = tTaskHighestReady();
 

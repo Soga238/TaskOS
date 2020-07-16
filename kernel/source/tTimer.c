@@ -58,7 +58,7 @@ void tTimerModuleInit(void)
     tSemInit(&tTimerProtectSem, 1, 1);
     tSemInit(&tTimerTickSem, 0, 0);
 
-    tTaskInit(&tTimeTask, tTimerSoftTask, (void *)0x22222222, TINYOS_TIMERTASK_PRIO, &taskEnv[TIMER_TASK_STACKE_SIZE]);
+    tTaskInit(&tTimeTask, tTimerSoftTask, (void *)0x22222222, TINYOS_TIMERTASK_PRIO, taskEnv, sizeof(taskEnv));
 }
 
 void tTimerStart(tTimer *timer)

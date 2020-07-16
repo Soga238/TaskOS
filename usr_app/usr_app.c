@@ -23,7 +23,11 @@ tTaskStack task2Env[TASK2_ENV_SIZE];
 tTaskStack task3Env[TASK3_ENV_SIZE];
 tTaskStack task4Env[TASK4_ENV_SIZE];
 
-tMutex mutex;
+tTaskInfo info1;
+tTaskInfo info2;
+tTaskInfo info3;
+tTaskInfo info4;
+
 
 void task1DestroyFunc(void *param)
 {
@@ -34,21 +38,12 @@ void task1Entry(void *argument)
 {
     systick_init_1ms();
 
-    tMutexInit(&mutex);
-
     while (1) {
-
-        tMutexWait(&mutex, 0);
-        tMutexWait(&mutex, 0);
-
         taskFlag1 = 0;
         tTaskDelay(1);
+        tTaskGetInfo(currentTask, &info1);
         taskFlag1 = 1;
-        tTaskDelay(1);
-
-        tMutexNotify(&mutex);
-        tMutexNotify(&mutex);
-        
+        tTaskDelay(1);    
     }
 }
 
@@ -57,17 +52,11 @@ void task1Entry(void *argument)
 void task2Entry(void *argument)
 {
     while (1) {
-        tMutexWait(&mutex, 0);
-        tMutexWait(&mutex, 0);
-
         taskFlag2 = 0;
         tTaskDelay(1);
+        tTaskGetInfo(currentTask, &info2);
         taskFlag2 = 1;
         tTaskDelay(1);
-
-        tMutexNotify(&mutex);
-        tMutexNotify(&mutex);
-
     }
 }
 
@@ -77,6 +66,9 @@ void task3Entry(void *argument)
 
         taskFlag3 = 0;
         tTaskDelay(1);
+        uint8_t x[6] = {0x01, 2, 3, 4, 5,6};
+       
+        tTaskGetInfo(currentTask, &info3);
         taskFlag3 = 1;
         tTaskDelay(1);
     }
@@ -88,6 +80,7 @@ void task4Entry(void *argument)
 
         taskFlag4 = 0;
         tTaskDelay(1);
+        tTaskGetInfo(currentTask, &info4);
         taskFlag4 = 1;
         tTaskDelay(1);
     }
@@ -95,14 +88,10 @@ void task4Entry(void *argument)
 
 void tInitApp(void)
 {
-    memset(task1Env, 0xFF, sizeof(task1Env));
-    memset(task2Env, 0xFF, sizeof(task2Env));
-    memset(task3Env, 0xFF, sizeof(task3Env));
-
-    tTaskInit(&tTask1, task1Entry, (void *)0x11111111, 0, &task1Env[TASK1_ENV_SIZE]);
-    tTaskInit(&tTask2, task2Entry, (void *)0x22222222, 1, &task2Env[TASK2_ENV_SIZE]);
-    // tTaskInit(&tTask3, task3Entry, (void *)0x33333333, 1, &task3Env[TASK3_ENV_SIZE]);
-    // tTaskInit(&tTask4, task4Entry, (void *)0x44444444, 1, &task4Env[TASK4_ENV_SIZE]);
+    tTaskInit(&tTask1, task1Entry, (void *)0x11111111, 0, task1Env, sizeof(task1Env));
+    tTaskInit(&tTask2, task2Entry, (void *)0x22222222, 1, task2Env, sizeof(task2Env));
+    tTaskInit(&tTask3, task3Entry, (void *)0x33333333, 1, task3Env, sizeof(task3Env));
+    tTaskInit(&tTask4, task4Entry, (void *)0x44444444, 1, task4Env, sizeof(task4Env));
 
 }
 

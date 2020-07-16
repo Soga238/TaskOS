@@ -8,6 +8,9 @@ typedef uint32_t tTaskStack;
 typedef struct _tEvent tEvent;
 typedef struct {
     tTaskStack* stack;
+    uint32_t* stackBase;
+    uint32_t stackSize;
+
     uint32_t wDelayTicks;   // 任务延时计数器
     uint32_t prio;          // 优先级
 
@@ -28,7 +31,6 @@ typedef struct {
     void* eventMsg;
     uint32_t waitEventResult;
 
-
     uint32_t waitFlagsType;
     uint32_t eventFlags;
 
@@ -40,9 +42,12 @@ typedef struct {
     uint32_t state;
     uint32_t slice;
     uint32_t suspendCount;
+
+    uint32_t stackSize;
+    uint32_t stackFreeSize;
 }tTaskInfo;
 
-extern void tTaskInit(tTask* task, void(*entry)(void*), void* param, uint32_t prio, tTaskStack* stack);
+extern void tTaskInit(tTask* task, void(*entry)(void*), void* param, uint32_t prio, tTaskStack* stackStart, uint32_t size);
 
 extern void tTaskGetInfo(tTask* task, tTaskInfo* info);
 

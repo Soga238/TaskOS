@@ -1,25 +1,34 @@
 #include ".\include\TinyOS.h"
+#include <string.h>
 
-void tTaskInit(tTask *task, void(*entry)(void *), void *param, uint32_t prio, tTaskStack *stack)
+void tTaskInit(tTask *task, void(*entry)(void *), void *param, uint32_t prio, tTaskStack *stack, uint32_t size)
 {
-    *(--stack) = (unsigned long)(1 << 24);              // XPSR, 设置了Thumb模式，恢复到Thumb状态而非ARM状态运行
-    *(--stack) = (unsigned long)entry;                  // 程序的入口地址
-    *(--stack) = (unsigned long)0x14;                   // R14(LR), 任务不会通过return xxx结束自己，所以未用
-    *(--stack) = (unsigned long)0x12;                   // R12, 未用
-    *(--stack) = (unsigned long)0x3;                    // R3, 未用
-    *(--stack) = (unsigned long)0x2;                    // R2, 未用
-    *(--stack) = (unsigned long)0x1;                    // R1, 未用
-    *(--stack) = (unsigned long)param;                  // R0 = param, 传给任务的入口函数
-    *(--stack) = (unsigned long)0x11;                   // R11, 未用
-    *(--stack) = (unsigned long)0x10;                   // R10, 未用
-    *(--stack) = (unsigned long)0x9;                    // R9, 未用
-    *(--stack) = (unsigned long)0x8;                    // R8, 未用
-    *(--stack) = (unsigned long)0x7;                    // R7, 未用
-    *(--stack) = (unsigned long)0x6;                    // R6, 未用
-    *(--stack) = (unsigned long)0x5;                    // R5, 未用
-    *(--stack) = (unsigned long)0x4;                    // R4, 未用
+    uint32_t* stackTop;
 
-    task->stack = stack;                                // 保存最终的值
+    task->stackBase = stack;
+    task->stackSize = size;
+    memset(stack, 0, size);
+
+    stackTop = stack + size / sizeof(tTaskStack);
+
+    *(--stackTop) = (unsigned long)(1 << 24);              // XPSR, 设置了Thumb模式，恢复到Thumb状态而非ARM状态运行
+    *(--stackTop) = (unsigned long)entry;                  // 程序的入口地址
+    *(--stackTop) = (unsigned long)0x14;                   // R14(LR), 任务不会通过return xxx结束自己，所以未用
+    *(--stackTop) = (unsigned long)0x12;                   // R12, 未用
+    *(--stackTop) = (unsigned long)0x3;                    // R3, 未用
+    *(--stackTop) = (unsigned long)0x2;                    // R2, 未用
+    *(--stackTop) = (unsigned long)0x1;                    // R1, 未用
+    *(--stackTop) = (unsigned long)param;                  // R0 = param, 传给任务的入口函数
+    *(--stackTop) = (unsigned long)0x11;                   // R11, 未用
+    *(--stackTop) = (unsigned long)0x10;                   // R10, 未用
+    *(--stackTop) = (unsigned long)0x9;                    // R9, 未用
+    *(--stackTop) = (unsigned long)0x8;                    // R8, 未用
+    *(--stackTop) = (unsigned long)0x7;                    // R7, 未用
+    *(--stackTop) = (unsigned long)0x6;                    // R6, 未用
+    *(--stackTop) = (unsigned long)0x5;                    // R5, 未用
+    *(--stackTop) = (unsigned long)0x4;                    // R4, 未用
+
+    task->stack = stackTop;                                // 保存最终的值
     task->wDelayTicks = 0;
     task->prio = prio;
 
@@ -146,6 +155,7 @@ void tTaskDeleteSelf(void)
 
 void tTaskGetInfo(tTask *task, tTaskInfo *info)
 {
+    uint32_t* stackEnd;
     uint32_t status = tTaskEnterCritical();
 
     info->delayTicks = task->wDelayTicks;
@@ -153,6 +163,14 @@ void tTaskGetInfo(tTask *task, tTaskInfo *info)
     info->slice = task->slice;
     info->state = task->state;
     info->suspendCount = task->suspendCount;
+
+    info->stackFreeSize = 0;
+    stackEnd = task->stackBase;
+    while ((*stackEnd++ == 0) && (stackEnd <= task->stackBase + task->stackSize / sizeof(tTaskStack))) {
+        info->stackFreeSize++;
+    }
+
+    info->stackFreeSize *= sizeof(tTaskStack);
 
     tTaskExitCritical(status);
 }
