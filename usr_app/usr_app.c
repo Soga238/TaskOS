@@ -36,14 +36,12 @@ void task1DestroyFunc(void *param)
 
 void task1Entry(void *argument)
 {
-    systick_init_1ms();
-
     while (1) {
         taskFlag1 = 0;
-        tTaskDelay(1);
+        // tTaskDelay(1);
         tTaskGetInfo(currentTask, &info1);
         taskFlag1 = 1;
-        tTaskDelay(1);    
+        // tTaskDelay(1);    
     }
 }
 
@@ -89,9 +87,9 @@ void task4Entry(void *argument)
 void tInitApp(void)
 {
     tTaskInit(&tTask1, task1Entry, (void *)0x11111111, 0, task1Env, sizeof(task1Env));
-    tTaskInit(&tTask2, task2Entry, (void *)0x22222222, 1, task2Env, sizeof(task2Env));
-    tTaskInit(&tTask3, task3Entry, (void *)0x33333333, 1, task3Env, sizeof(task3Env));
-    tTaskInit(&tTask4, task4Entry, (void *)0x44444444, 1, task4Env, sizeof(task4Env));
+    // tTaskInit(&tTask2, task2Entry, (void *)0x22222222, 1, task2Env, sizeof(task2Env));
+    // tTaskInit(&tTask3, task3Entry, (void *)0x33333333, 1, task3Env, sizeof(task3Env));
+    // tTaskInit(&tTask4, task4Entry, (void *)0x44444444, 1, task4Env, sizeof(task4Env));
 
 }
 

@@ -27,6 +27,10 @@ tBitmap taskPrioBitmap;
 uint8_t schedLockCount;
 tList tTaskDelayedList; // 延时链表
 
+uint32_t idleCount;
+uint32_t idleMaxCount;
+uint32_t tickCount;
+
 // 返回优先级最好的就绪任务块指针
 tTask *tTaskHighestReady(void)
 {
@@ -139,10 +143,67 @@ void tTaskSchedRemove(tTask *task)
     }
 }
 
+
+static float cpuUsage;                      // cpu使用率统计
+static uint32_t enableCpuUsageStat;         // 是否使能cpu统计
+
+#define TICKS_PER_SEC 1000
+
+static void initCpuUsageStat(void)
+{
+    idleCount = 0;
+    idleMaxCount = 0;
+    cpuUsage = 0;
+    enableCpuUsageStat = 0;
+}
+
+static void checkCpuUsage(void)
+{
+    // 与空闲任务的cpu统计同步
+    if (enableCpuUsageStat == 0) {
+        enableCpuUsageStat = 1;
+        tickCount = 0;
+        return;
+    }
+
+    if (tickCount == TICKS_PER_SEC) {
+        // 统计最初1s内的最大计数值
+        idleMaxCount = idleCount;
+        idleCount = 0;
+
+        // 计数完毕，开启调度器，允许切换到其它任务
+        tTaskSchedEnable();
+    } else if (tickCount % TICKS_PER_SEC == 0) {
+        // 之后每隔1s统计一次，同时计算cpu利用率
+        cpuUsage = 100 - (idleCount * 100.0 / idleMaxCount);
+        idleCount = 0;
+    }
+}
+
+static void cpuUsageSyncWithSysTick(void)
+{
+    // 等待与时钟节拍同步
+    while (enableCpuUsageStat == 0) {
+        ;;
+    }
+}
+
 void taskIdle(void *argument)
 {
+    tTaskSchedDisable();
+
+    tInitApp();
+
+    systick_init_1ms();
+
+    cpuUsageSyncWithSysTick();
+
     while (1) {
         // 不要添加延时，演示OS不完善，会导致bug
+
+        uint32_t status = tTaskEnterCritical();
+        idleCount++;
+        tTaskExitCritical(status);
     }
 }
 
@@ -177,6 +238,12 @@ void tTaskSystemTickHandler(void)
         }
     }
 
+    // 节拍计数增加
+    tickCount++;
+
+    // 检查cpu使用率
+    checkCpuUsage();
+
     // 当前调度的模型是：只有最高优先级的任务链表都处于休眠状态，才能执行低优先级的任务
     tTaskSched();
     tTaskExitCritical(status);
@@ -189,7 +256,7 @@ int main(void)
     tTaskDelayedListInit();
     tTaskSchedInit();
 
-    tInitApp();
+    initCpuUsageStat();
 
     tTaskInit(&tTaskIdle, taskIdle, (void *)0, TINYOS_PRIO_COUNT - 1, taskIdleEnv, sizeof(taskIdleEnv));
 
